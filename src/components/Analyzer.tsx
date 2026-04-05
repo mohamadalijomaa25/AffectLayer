@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, MessageSquare } from "lucide-react";
 import { analyzeText, loadingMessages, exampleSamples, type AnalysisResult } from "@/lib/analyzer";
 
@@ -14,6 +14,8 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loadingStep, setLoadingStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (exampleText) {
@@ -23,6 +25,14 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
       onExampleConsumed?.();
     }
   }, [exampleText, onExampleConsumed]);
+
+  useEffect(() => {
+    if (state === "loading" || state === "results") {
+      setTimeout(() => {
+        scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 100);
+    }
+  }, [state]);
 
   useEffect(() => {
     if (state !== "loading") return;
@@ -111,6 +121,8 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
             </div>
           )}
         </div>
+
+        <div ref={scrollRef} className="scroll-mt-24" />
 
         {/* Loading */}
         {state === "loading" && (
