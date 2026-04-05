@@ -28,9 +28,21 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
 
   useEffect(() => {
     if (state === "loading" || state === "results") {
-      setTimeout(() => {
-        scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // Small delay to ensure React has mounted the target div
+      const timer = setTimeout(() => {
+        const element = document.getElementById("analysis-output");
+        if (element) {
+          const navbarHeight = 80;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
       }, 100);
+      return () => clearTimeout(timer);
     }
   }, [state]);
 
@@ -122,7 +134,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
           )}
         </div>
 
-        <div ref={scrollRef} className="scroll-mt-24" />
+        <div id="analysis-output" ref={scrollRef} className="scroll-mt-24" />
 
         {/* Loading */}
         {state === "loading" && (
