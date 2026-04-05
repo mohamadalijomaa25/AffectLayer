@@ -14,7 +14,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loadingStep, setLoadingStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
-  
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
