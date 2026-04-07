@@ -21,10 +21,13 @@ export default defineConfig({
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 3000,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes('@xenova/transformers')) {
+            return 'transformers';
+          }
           if (id.includes('node_modules')) {
             return 'vendor';
           }
