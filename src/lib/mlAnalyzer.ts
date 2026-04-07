@@ -195,14 +195,14 @@ export async function mlAnalyzeText(
   }`;
 
   return {
-    surfaceEmotion: { label: surfaceLabel, confidence: surfaceConf, explanation: surfaceExplanation },
-    hiddenEmotion:  { label: hiddenLabel,  confidence: hiddenConf,  icon: hiddenIcon },
-    maskingStyle:   { label: maskingResult.label, confidence: maskingResult.confidence, definition: maskingResult.definition },
+    surfaceEmotion: { label: surfaceLabel, confidence: Math.round(surfaceConf), explanation: surfaceExplanation },
+    hiddenEmotion:  { label: hiddenLabel,  confidence: Math.round(hiddenConf),  icon: hiddenIcon },
+    maskingStyle:   { label: maskingResult.label, confidence: Math.round(maskingResult.confidence), definition: maskingResult.definition },
     explanation,
     cues: cueWords,
-    overallConfidence,
-    maskingLikelihood,
-    ambiguityScore,
-    mismatchScore,
+    overallConfidence: Math.round(overallConfidence),
+    maskingLikelihood: Math.round(maskingLikelihood),
+    ambiguityScore:    Math.round(ambiguityScore),
+    mismatchScore:     Math.round(mismatchScore),
   };
 }
