@@ -44,25 +44,37 @@ export async function loadMLModel(
     env.allowLocalModels = false;
     env.allowRemoteModels = true;
 
-    onProgress?.({ status: "loading", progress: 20, message: "Downloading DistilBERT model weights..." });
+    onProgress?.({ status: "loading", progress: 10, message: "Fetching quantized model (~22MB)..." });
 
     pipelineInstance = await pipeline(
       "sentiment-analysis",
       "Xenova/distilbert-base-uncased-finetuned-sst-2-english",
       {
+        quantized: true,
         progress_callback: (info: any) => {
-          if (info.status === "downloading") {
-            const pct = Math.round(((info.loaded ?? 0) / (info.total ?? 1)) * 80) + 20;
-            onProgress?.({ status: "loading", progress: pct, message: `Downloading model (${Math.round(((info.loaded ?? 0) / 1024 / 1024))}MB)...` });
+          if (info.status === "initiate") {
+            onProgress?.({ status: "loading", progress: 15, message: `Loading: ${info.file ?? "model files"}...` });
+          } else if (info.status === "downloading") {
+            const loaded = info.loaded ?? 0;
+            const total = info.total ?? 1;
+            const filePct = Math.round((loaded / total) * 70);
+            onProgress?.({
+              status: "loading",
+              progress: 15 + filePct,
+              message: `Downloading model (${(loaded / 1024 / 1024).toFixed(1)} / ${(total / 1024 / 1024).toFixed(1)} MB)...`,
+            });
+          } else if (info.status === "done") {
+            onProgress?.({ status: "loading", progress: 90, message: "Preparing model for inference..." });
           }
         },
       }
     );
 
-    onProgress?.({ status: "ready", progress: 100, message: "Model ready." });
+    onProgress?.({ status: "ready", progress: 100, message: "Model ready. Running inference..." });
   } catch (err) {
     isLoading = false;
-    onProgress?.({ status: "error", message: "Failed to load ML model. Check your internet connection." });
+    pipelineInstance = null;
+    onProgress?.({ status: "error", message: "Failed to load ML model. Check your internet connection and try again." });
     throw err;
   }
 }

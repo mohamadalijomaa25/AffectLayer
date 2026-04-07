@@ -240,17 +240,21 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
             <div className="flex items-center gap-3">
               <Brain className="w-5 h-5 text-pink animate-pulse" />
               <p className="text-sm font-medium text-foreground">Loading DistilBERT Model</p>
+              <span className="ml-auto text-xs text-muted-foreground">{mlProgress.progress ?? 0}%</span>
             </div>
             <div className="w-full h-2 rounded-full bg-secondary overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-pink to-violet transition-all duration-500"
+                className="h-full rounded-full bg-gradient-to-r from-pink to-violet transition-all duration-700"
                 style={{ width: `${mlProgress.progress ?? 0}%` }}
               />
             </div>
             <p className="text-xs text-muted-foreground">{mlProgress.message}</p>
-            {(mlProgress.progress ?? 0) < 25 && (
-              <p className="text-xs text-muted-foreground/60 italic">First-time use: downloading ~80MB model. This is cached for future use.</p>
-            )}
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
+              <span className="text-amber-400 text-xs">ℹ</span>
+              <p className="text-xs text-muted-foreground/80">
+                <span className="text-amber-400 font-medium">First-time use only:</span> The quantized DistilBERT model (~22MB) is being downloaded from Hugging Face. It will be cached permanently in your browser after this.
+              </p>
+            </div>
           </div>
         )}
 
