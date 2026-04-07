@@ -95,6 +95,56 @@ export const exampleSamples = [
     hiddenEmotion: "Anger",
     maskingStyle: "Sarcasm Masking",
   },
+  {
+    text: "No worries, I'm used to being forgotten.",
+    hiddenEmotion: "Loneliness",
+    maskingStyle: "Minimization",
+  },
+  {
+    text: "Wow, great — another meeting that could've been an email.",
+    hiddenEmotion: "Frustration",
+    maskingStyle: "Sarcasm Masking",
+  },
+  {
+    text: "It's fine, I didn't really want to go anyway.",
+    hiddenEmotion: "Hurt",
+    maskingStyle: "Minimization",
+  },
+  {
+    text: "I'm totally fine with being the last to know, as always.",
+    hiddenEmotion: "Resentment",
+    maskingStyle: "Passive Aggression",
+  },
+  {
+    text: "Haha yeah, story of my life — nobody listens.",
+    hiddenEmotion: "Sadness",
+    maskingStyle: "Humor Masking",
+  },
+  {
+    text: "Don't mind me, I'll just figure it out alone like I always do.",
+    hiddenEmotion: "Overwhelm",
+    maskingStyle: "Emotional Suppression",
+  },
+  {
+    text: "Oh, no it's completely fine that you cancelled last minute.",
+    hiddenEmotion: "Anger",
+    maskingStyle: "Passive Aggression",
+  },
+  {
+    text: "Lol yeah I'm great, just haven't slept in three days.",
+    hiddenEmotion: "Anxiety",
+    maskingStyle: "Humor Masking",
+  },
+  {
+    text: "I guess I just need to accept that things are this way.",
+    hiddenEmotion: "Hopelessness",
+    maskingStyle: "Emotional Suppression",
+  },
+  {
+    text: "It's not a big deal, I can handle everything on my own.",
+    hiddenEmotion: "Distress",
+    maskingStyle: "Minimization",
+  },
 ];
 
 export const loadingMessages = [
