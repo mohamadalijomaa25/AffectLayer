@@ -16,7 +16,7 @@ const PipelineSection = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16 space-y-3">
           <h2 className="section-title">NLP <span className="gradient-text">Pipeline</span></h2>
-          <p className="section-subtitle mx-auto">A multi-stage architecture that progressively analyzes text from surface-level tone to deep latent affect.</p>
+          <p className="section-subtitle mx-auto">A multi-stage architecture representing a Tri-Engine benchmarking approach for emotional masking detection.</p>
         </div>
 
         <div className="relative">

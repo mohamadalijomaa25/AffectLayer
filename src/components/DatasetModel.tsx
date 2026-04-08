@@ -3,77 +3,77 @@ import { Database, Cpu, Settings, BarChart3 } from "lucide-react";
 
 const tabs = [
   {
-    id: "dataset",
+    id: "architecture",
     icon: Database,
-    label: "Dataset",
+    label: "System Architecture",
     content: {
-      title: "Custom Annotated Dataset",
+      title: "Full-Stack Serverless Architecture",
       items: [
-        "Curated corpus of emotionally masked language samples across multiple domains",
-        "Multi-label annotations: surface emotion, hidden emotion, masking style",
-        "Sourced from social media, chat logs, diary entries, and email-style text",
-        "Balanced representation across emotion categories and masking strategies",
-        "Inter-annotator agreement metrics and annotation guidelines documented",
+        "React + Vite Single-Page Application (SPA) frontend hosted on Render",
+        "Python FastAPI backend handling computationally intensive deterministic sub-routines",
+        "Stateless API integration utilizing HTTP endpoints for model inference",
+        "Asynchronous client-side processing to eliminate UI thread blocking",
+        "Zero-database implementation ensuring absolute user privacy and data volatility",
       ],
     },
   },
   {
-    id: "model",
-    icon: Cpu,
-    label: "Model Architecture",
-    content: {
-      title: "Transformer-Based Architecture",
-      items: [
-        "Baseline: TF-IDF features with SVM and logistic regression classifiers",
-        "Advanced: Fine-tuned BERT / RoBERTa with task-specific classification heads",
-        "Optional multi-task transformer for joint surface, hidden, and masking prediction",
-        "Attention-based cue extraction for explainability support",
-        "Modular pipeline allowing independent evaluation of each stage",
-      ],
-    },
-  },
-  {
-    id: "training",
+    id: "classical",
     icon: Settings,
-    label: "Training Strategy",
+    label: "Classical NLP",
     content: {
-      title: "Supervised Fine-Tuning",
+      title: "Rule-Based Lexicon (VADER)",
       items: [
-        "Supervised fine-tuning on annotated emotionally masked text",
-        "Multi-label and multi-task learning formulations explored",
-        "Class balancing through oversampling and focal loss weighting",
-        "Cross-validation with stratified splits for robust evaluation",
-        "Rationale extraction and explainability module training",
+        "Deterministic valence-aware dictionary evaluation (VADER)",
+        "Hard-coded psychological heuristics matching conversational patterns",
+        "High-performance regex evaluation for lexical masking cues",
+        "Executes securely in the Python FastAPI backend",
+        "Provides a foundational baseline metric without contextual hallucination",
       ],
     },
   },
   {
-    id: "eval",
-    icon: BarChart3,
-    label: "Evaluation",
+    id: "ml",
+    icon: Cpu,
+    label: "Machine Learning",
     content: {
-      title: "Evaluation Metrics",
+      title: "DistilBERT (SST-2)",
       items: [
-        "Accuracy, Macro F1, Precision, and Recall across all prediction tasks",
-        "Per-class confusion matrices for error analysis",
-        "Explainability usefulness scoring through human evaluation",
-        "Ablation studies for pipeline component contribution",
-        "Comparison against sentiment-only and sarcasm-only baselines",
+        "Transformer-based Neural Network (DistilBERT) fine-tuned on the SST-2 dataset",
+        "Offloaded via Serverless Inference API to bypass PaaS memory constraints",
+        "Generates surface-level contextual embeddings with floating-point confidence",
+        "Latent mismatch evaluated against psychological rule engines",
+        "Executes via the HuggingFace infrastructure bridging the FastAPI relay",
+      ],
+    },
+  },
+  {
+    id: "llm",
+    icon: BarChart3,
+    label: "Generative AI",
+    content: {
+      title: "Gemini 2.5 LLM",
+      items: [
+        "Low-temperature (0.2) generative inference configured for deterministic consistency",
+        "Zero-shot prompting tailored for latent emotion analysis and masking detection",
+        "Executes securely alongside the client-browser using local API hydration",
+        "Dynamic multi-lingual output parsing (JSON schema enforcement)",
+        "Captures profound psychological nuance unseen in statistical models",
       ],
     },
   },
 ];
 
 const DatasetModel = () => {
-  const [active, setActive] = useState("dataset");
+  const [active, setActive] = useState("architecture");
   const current = tabs.find(t => t.id === active)!;
 
   return (
     <section id="dataset-model" className="section-padding">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 space-y-3">
-          <h2 className="section-title">Dataset & <span className="gradient-text">Model</span></h2>
-          <p className="section-subtitle mx-auto">Technical details of the data, architecture, training, and evaluation methodology.</p>
+          <h2 className="section-title">Architecture & <span className="gradient-text">Engines</span></h2>
+          <p className="section-subtitle mx-auto">Technical details of the system architecture and the three core engines driving the NLP pipeline.</p>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
