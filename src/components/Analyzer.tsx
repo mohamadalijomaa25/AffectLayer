@@ -349,11 +349,20 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
 
             {/* Explanation */}
             <div className="glass-card-hover p-5 space-y-3">
-              <div className="flex items-center gap-2 text-blue">
-                <Lightbulb className="w-4 h-4" />
-                <span className="text-xs font-medium uppercase tracking-wider">Explainable Rationale</span>
+              <div className="flex items-baseline justify-between gap-2">
+                <div className="flex items-center gap-2 text-blue">
+                  <Lightbulb className="w-4 h-4" />
+                  <span className="text-xs font-medium uppercase tracking-wider">Explainable Rationale</span>
+                </div>
               </div>
               <p className="text-sm text-foreground/80 leading-relaxed">{currentResult.explanation}</p>
+              {currentResult.explanationArabic && (
+                <div className="pt-2 border-t border-border mt-2">
+                  <p className="text-sm text-foreground/80 leading-relaxed text-right" dir="rtl">
+                    {currentResult.explanationArabic}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Cues */}

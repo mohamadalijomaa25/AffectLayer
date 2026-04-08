@@ -50,8 +50,8 @@ def analyze_endpoint(req: AnalyzeRequest):
             return {
                 "surfaceEmotion": {
                     "label": result["surface"],
-                    "confidence": 75, # Default since classical doesn't give a pure %
-                    "explanation": f"Surface tone detected as '{result['surface']}' based on VADER compound score ({result['sentiment_score']:.2f})."
+                    "confidence": 75,
+                    "explanation": f"Surface tone detected as '{result['surface']}' based on VADER compound score ({result.get('sentiment_score', 0):.2f})."
                 },
                 "hiddenEmotion": {
                     "label": result["hidden"],
@@ -64,6 +64,7 @@ def analyze_endpoint(req: AnalyzeRequest):
                     "definition": "Detected via classical heuristic rules."
                 },
                 "explanation": "Result computed using classical rule-based lexicon. No ML model inference used.",
+                "explanationArabic": "تم حساب النتيجة باستخدام معجم كلاسيكي مبني على القواعد. لم يتم استخدام استنتاج نماذج التعلم الآلي.",
                 "cues": [],
                 "overallConfidence": 70,
                 "maskingLikelihood": 70 if result["masking"] != "None Detected" else 20,
@@ -75,6 +76,9 @@ def analyze_endpoint(req: AnalyzeRequest):
             result = ml_analyzer.ml_analyze(text)
             
             # Map Python dict to JS AnalysisResult structure
+            en_exp = f"DistilBERT (SST-2) classified the surface as {result['surface']} ({result['confidence']}% conf). Latent mismatch checked against context rules."
+            ar_exp = f"قام نموذج DistilBERT بتصنيف السطح الخارجي للنص على أنه {result['surface']} (بثقة {result['confidence']}%). تم التحقق من عدم التطابق الكامن باستخدام قواعد السياق."
+            
             return {
                 "surfaceEmotion": {
                     "label": result["surface"],
@@ -91,7 +95,8 @@ def analyze_endpoint(req: AnalyzeRequest):
                     "confidence": 80 if result["masking"] != "None Detected" else 25,
                     "definition": "Detected using passive/minimizer/suppression context evaluation."
                 },
-                "explanation": f"DistilBERT (SST-2) classified the surface as {result['surface']} ({result['confidence']}% conf). Latent mismatch checked against context rules.",
+                "explanation": en_exp,
+                "explanationArabic": ar_exp,
                 "cues": [],
                 "overallConfidence": round((result["confidence"] + 80 + 72)/3),
                 "maskingLikelihood": 80 if result["masking"] != "None Detected" else 20,

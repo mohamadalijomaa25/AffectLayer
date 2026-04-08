@@ -3,6 +3,7 @@ export interface AnalysisResult {
   hiddenEmotion: { label: string; confidence: number; icon: string };
   maskingStyle: { label: string; confidence: number; definition: string };
   explanation: string;
+  explanationArabic?: string;
   cues: string[];
   overallConfidence: number;
   maskingLikelihood: number;
@@ -17,6 +18,7 @@ const defaultResult: AnalysisResult = {
   hiddenEmotion: { label: "Anxiety", confidence: 65, icon: "😰" },
   maskingStyle: { label: "Emotional Suppression", confidence: 68, definition: "Containing emotional responses through forced acceptance and detachment." },
   explanation: "The text presents a controlled, measured tone that may conceal underlying emotional tension. Subtle linguistic patterns suggest suppressed affect beneath an outwardly composed surface.",
+  explanationArabic: "يقدم النص نبرة محكومة وموزونة قد تخفي توتراً عاطفياً كامناً. تشير الأنماط اللغوية الدقيقة إلى وجود تأثير مكبوت تحت سطح يبدو متماسكاً.",
   cues: [],
   overallConfidence: 67,
   maskingLikelihood: 70,
@@ -40,9 +42,14 @@ Analyze the following text and return ONLY a raw JSON object (no markdown format
 {
   "surfaceEmotion": { "label": "String (e.g. Polite)", "confidence": Number 0-100, "explanation": "String explaining why" },
   "hiddenEmotion": { "label": "String (e.g. Frustration)", "confidence": Number 0-100, "icon": "Emoji string" },
-  "maskingStyle": { "label": "String (e.g. Passive Aggression)", "confidence": Number 0-100, "definition": "String explaining this mechanism" },
-  "explanation": "String giving detailed rationale of the emotional mismatch",
-  "cues": ["String exactly from text"],
+  "maskingStyle": {
+    "label": "The coping mechanism (e.g., Sarcasm, Passive-Aggression, Minimization)",
+    "confidence": 0-100,
+    "definition": "Brief psychological definition of this style"
+  },
+  "explanation": "A 2-3 sentence clinical rationale of the surface-vs-hidden mismatch.",
+  "explanationArabic": "The exact same explanation translated to Arabic.",
+  "cues": ["array", "of", "exact", "words/phrases", "from", "text", "showing", "masking"],
   "overallConfidence": Number 0-100,
   "maskingLikelihood": Number 0-100,
   "ambiguityScore": Number 0-100,
