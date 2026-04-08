@@ -54,25 +54,44 @@ const engineConfig = {
 const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => {
   const [input, setInput] = useState("");
   const [engine, setEngine] = useState<Engine>("classical");
-  const [state, setState] = useState<"idle" | "loading" | "results">("idle");
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  
+  // Track loading state per engine
+  const [loadingStates, setLoadingStates] = useState<Record<Engine, boolean>>({
+    classical: false,
+    ml: false,
+    gemini: false,
+  });
+
+  // Track results per engine
+  const [results, setResults] = useState<Record<Engine, AnalysisResult | null>>({
+    classical: null,
+    ml: null,
+    gemini: null,
+  });
+
   const [loadingStep, setLoadingStep] = useState(0);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [mlProgress, setMlProgress] = useState<MLProgress | null>(null);
+  const [errorMsgs, setErrorMsgs] = useState<Record<Engine, string>>({
+    classical: "",
+    ml: "",
+    gemini: "",
+  });
+  
   const scrollRef = useRef<HTMLDivElement>(null);
   const cfg = engineConfig[engine];
 
+  const currentResult = results[engine];
+  const currentLoading = loadingStates[engine];
+  const currentError = errorMsgs[engine];
+
   useEffect(() => {
     if (exampleText) {
-      setInput(exampleText);
-      setState("idle");
-      setResult(null);
+      handleTextChange(exampleText);
       onExampleConsumed?.();
     }
   }, [exampleText, onExampleConsumed]);
 
   useEffect(() => {
-    if (state === "loading" || state === "results") {
+    if (Object.values(loadingStates).some(Boolean) || currentResult) {
       const timer = setTimeout(() => {
         const element = document.getElementById("analysis-output");
         if (element) {
@@ -83,23 +102,30 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [state]);
+  }, [loadingStates, currentResult]);
 
   // Gemini loading steps animation
   useEffect(() => {
-    if (state !== "loading" || engine !== "gemini") return;
+    if (!loadingStates.gemini || engine !== "gemini") return;
     if (loadingStep >= loadingMessages.length) return;
     const timer = setTimeout(() => setLoadingStep(s => s + 1), 500);
     return () => clearTimeout(timer);
-  }, [state, loadingStep, engine]);
+  }, [loadingStates.gemini, loadingStep, engine]);
+
+  const handleTextChange = (newText: string) => {
+    setInput(newText);
+    setResults({ classical: null, ml: null, gemini: null });
+    setErrorMsgs({ classical: "", ml: "", gemini: "" });
+  };
 
   const handleAnalyze = async () => {
     if (!input.trim()) return;
     setLoadingStep(0);
-    setResult(null);
-    setErrorMsg("");
-    setMlProgress(null);
-    setState("loading");
+    
+    // Clear current engine error and result
+    setResults(prev => ({ ...prev, [engine]: null }));
+    setErrorMsgs(prev => ({ ...prev, [engine]: "" }));
+    setLoadingStates(prev => ({ ...prev, [engine]: true }));
 
     try {
       let res: AnalysisResult;
@@ -107,43 +133,43 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
       if (engine === "classical") {
         res = await classicalAnalyzeText(input);
       } else if (engine === "ml") {
-        res = await mlAnalyzeText(input, (p) => setMlProgress(p));
+        res = await mlAnalyzeText(input);
       } else {
         // Gemini
         res = await analyzeText(input);
       }
 
-      setResult(res);
-      setState("results");
+      setResults(prev => ({ ...prev, [engine]: res }));
+      setLoadingStates(prev => ({ ...prev, [engine]: false }));
+      
+      // We pass the active result up if needed
       onResultChange?.(res);
+      
     } catch (err: any) {
-      setState("idle");
+      setLoadingStates(prev => ({ ...prev, [engine]: false }));
+      
+      let errMsg = "Analysis failed. Please check your API key or try again.";
       if (err.message === "MISSING_API_KEY") {
-        setErrorMsg("API Key required. Please click the Settings icon in the top right to set your free Gemini API key.");
+        errMsg = "API Key required. Please click the Settings icon in the top right to set your free Gemini API key.";
       } else if (engine === "ml") {
-        setErrorMsg("ML model failed to load. Please check your internet connection and try again.");
-      } else {
-        setErrorMsg("Analysis failed. Please check your API key or try again.");
+        errMsg = "ML model failed to respond from Python backend.";
       }
+      
+      setErrorMsgs(prev => ({ ...prev, [engine]: errMsg }));
     }
   };
 
   const handleClear = () => {
     setInput("");
-    setResult(null);
-    setState("idle");
-    setErrorMsg("");
-    setMlProgress(null);
+    setResults({ classical: null, ml: null, gemini: null });
+    setErrorMsgs({ classical: "", ml: "", gemini: "" });
+    setLoadingStates({ classical: false, ml: false, gemini: false });
     onResultChange?.(null);
   };
 
   const loadExample = () => {
     const sample = exampleSamples[Math.floor(Math.random() * exampleSamples.length)];
-    setInput(sample.text);
-    setResult(null);
-    setState("idle");
-    setErrorMsg("");
-    setMlProgress(null);
+    handleTextChange(sample.text);
   };
 
   return (
@@ -165,7 +191,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
             return (
               <button
                 key={eng}
-                onClick={() => { setEngine(eng); setState("idle"); setResult(null); setErrorMsg(""); }}
+                onClick={() => setEngine(eng)}
                 className={`glass-card p-4 text-left transition-all duration-300 group border-2 ${
                   active ? `${c.border} ${c.bg}` : "border-transparent hover:border-border"
                 }`}
@@ -203,7 +229,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         <div className="glass-card p-6 md:p-8 space-y-6">
           <textarea
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={e => handleTextChange(e.target.value)}
             placeholder={`Try: "Haha it's okay, I'm used to being left out." or "Thanks so much for sending this at the last possible minute."`}
             className="w-full h-32 bg-secondary/50 border border-border rounded-lg p-4 text-foreground text-sm placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-1 focus:ring-violet/40 transition-all"
           />
@@ -211,7 +237,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleAnalyze}
-              disabled={!input.trim() || state === "loading"}
+              disabled={!input.trim() || currentLoading}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r ${cfg.gradient} text-primary-foreground font-medium text-sm transition-all duration-300 hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed`}
             >
               <Play className="w-4 h-4" /> Analyze with {cfg.label}
@@ -224,10 +250,10 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
             </button>
           </div>
 
-          {errorMsg && (
+          {currentError && (
             <div className="flex items-start gap-2 p-4 rounded-lg bg-red-500/10 border border-red-500/20 animate-fade-in">
               <AlertTriangle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
-              <p className="text-sm text-red-500/90 leading-relaxed">{errorMsg}</p>
+              <p className="text-sm text-red-500/90 leading-relaxed">{currentError}</p>
             </div>
           )}
         </div>
@@ -235,7 +261,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         <div id="analysis-output" ref={scrollRef} className="scroll-mt-24" />
 
         {/* Gemini Loading Steps */}
-        {state === "loading" && engine === "gemini" && (
+        {currentLoading && engine === "gemini" && (
           <div className="mt-8 glass-card p-8 flex flex-col items-center gap-4 animate-fade-in">
             <div className="w-10 h-10 rounded-full border-2 border-violet/30 border-t-violet animate-spin" />
             <div className="space-y-2 text-center">
@@ -249,7 +275,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         )}
 
         {/* Classical / ML Loading Spinner */}
-        {state === "loading" && (engine === "classical" || (engine === "ml" && !mlProgress)) && (
+        {currentLoading && engine !== "gemini" && (
           <div className="mt-8 glass-card p-8 flex flex-col items-center gap-4 animate-fade-in">
             <div className={`w-10 h-10 rounded-full border-2 ${engine === "classical" ? "border-cyan/30 border-t-cyan" : "border-pink/30 border-t-pink"} animate-spin`} />
             <p className="text-sm text-muted-foreground">
@@ -259,7 +285,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         )}
 
         {/* Results */}
-        {state === "results" && result && (
+        {!currentLoading && currentResult && (
           <div className="mt-8 space-y-4 animate-fade-up">
             {/* Engine Badge */}
             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${cfg.border} ${cfg.bg} w-fit`}>
@@ -276,14 +302,14 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   <Layers className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Surface Emotion</span>
                 </div>
-                <div className="text-2xl font-heading font-bold text-foreground">{result.surfaceEmotion.label}</div>
+                <div className="text-2xl font-heading font-bold text-foreground">{currentResult.surfaceEmotion.label}</div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-cyan to-cyan/60 transition-all duration-700" style={{ width: `${result.surfaceEmotion.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-cyan to-cyan/60 transition-all duration-700" style={{ width: `${currentResult.surfaceEmotion.confidence}%` }} />
                   </div>
-                  <span className="text-xs text-cyan font-medium">{result.surfaceEmotion.confidence}%</span>
+                  <span className="text-xs text-cyan font-medium">{currentResult.surfaceEmotion.confidence}%</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">{result.surfaceEmotion.explanation}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{currentResult.surfaceEmotion.explanation}</p>
               </div>
 
               {/* Hidden Emotion */}
@@ -293,14 +319,14 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   <span className="text-xs font-medium uppercase tracking-wider">Hidden Emotion</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">{result.hiddenEmotion.icon}</span>
-                  <span className="text-2xl font-heading font-bold text-foreground">{result.hiddenEmotion.label}</span>
+                  <span className="text-2xl">{currentResult.hiddenEmotion.icon}</span>
+                  <span className="text-2xl font-heading font-bold text-foreground">{currentResult.hiddenEmotion.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-pink to-pink/60 transition-all duration-700" style={{ width: `${result.hiddenEmotion.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-pink to-pink/60 transition-all duration-700" style={{ width: `${currentResult.hiddenEmotion.confidence}%` }} />
                   </div>
-                  <span className="text-xs text-pink font-medium">{result.hiddenEmotion.confidence}%</span>
+                  <span className="text-xs text-pink font-medium">{currentResult.hiddenEmotion.confidence}%</span>
                 </div>
               </div>
 
@@ -310,14 +336,14 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   <AlertTriangle className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Masking Style</span>
                 </div>
-                <div className="text-2xl font-heading font-bold text-foreground">{result.maskingStyle.label}</div>
+                <div className="text-2xl font-heading font-bold text-foreground">{currentResult.maskingStyle.label}</div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-violet to-violet/60 transition-all duration-700" style={{ width: `${result.maskingStyle.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-violet to-violet/60 transition-all duration-700" style={{ width: `${currentResult.maskingStyle.confidence}%` }} />
                   </div>
-                  <span className="text-xs text-violet font-medium">{result.maskingStyle.confidence}%</span>
+                  <span className="text-xs text-violet font-medium">{currentResult.maskingStyle.confidence}%</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">{result.maskingStyle.definition}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{currentResult.maskingStyle.definition}</p>
               </div>
             </div>
 
@@ -327,18 +353,18 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                 <Lightbulb className="w-4 h-4" />
                 <span className="text-xs font-medium uppercase tracking-wider">Explainable Rationale</span>
               </div>
-              <p className="text-sm text-foreground/80 leading-relaxed">{result.explanation}</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{currentResult.explanation}</p>
             </div>
 
             {/* Cues */}
-            {result.cues.length > 0 && (
+            {currentResult.cues.length > 0 && (
               <div className="glass-card-hover p-5 space-y-3">
                 <div className="flex items-center gap-2 text-cyan">
                   <MessageSquare className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Linguistic Cues</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {result.cues.map((cue, i) => (
+                  {currentResult.cues.map((cue: string, i: number) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-cyan/10 border border-cyan/20 text-cyan text-xs font-medium">
                       "{cue}"
                     </span>
@@ -352,10 +378,10 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Confidence & Risk Summary</span>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Overall Confidence", value: result.overallConfidence },
-                  { label: "Masking Likelihood", value: result.maskingLikelihood },
-                  { label: "Ambiguity Score", value: result.ambiguityScore },
-                  { label: "Mismatch Score", value: result.mismatchScore },
+                  { label: "Overall Confidence", value: currentResult.overallConfidence },
+                  { label: "Masking Likelihood", value: currentResult.maskingLikelihood },
+                  { label: "Ambiguity Score", value: currentResult.ambiguityScore },
+                  { label: "Mismatch Score", value: currentResult.mismatchScore },
                 ].map((item, i) => (
                   <div key={i} className="text-center space-y-2">
                     <div className="relative w-16 h-16 mx-auto">
