@@ -1,5 +1,4 @@
-transformers
-torch
 vaderSentiment
 google-generativeai
 tabulate
+requests

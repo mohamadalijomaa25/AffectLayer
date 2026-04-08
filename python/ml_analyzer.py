@@ -1,19 +1,39 @@
-from transformers import pipeline
+import os
+import requests
 
 class MLAnalyzer:
     def __init__(self):
-        # Load DistilBERT model fine-tuned on SST-2 (same as the JS version)
-        self.sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+        # We no longer load the PyTorch pipeline here.
+        # We use Hugging Face's Free Serverless Inference API to bypass the 512MB RAM limit on Render.
+        self.api_url = "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english"
+        self.token = os.environ.get("HF_TOKEN", "")
 
     def ml_analyze(self, text):
         """
-        Contemporary ML approach using pre-trained DistilBERT model.
+        Contemporary ML approach using pre-trained DistilBERT model via HuggingFace API.
         """
-        result = self.sentiment_pipeline(text)[0]
-        label = result['label']
-        score = result['score']
+        headers = {"Authorization": f"Bearer {self.token}"}
         
-        # Heuristics derived from raw text (mimicking the JS behavior)
+        # Fallback values if API fails (e.g. rate limit or token missing)
+        label = "POSITIVE"
+        score = 0.50
+        
+        try:
+            if self.token:
+                response = requests.post(self.api_url, headers=headers, json={"inputs": text}, timeout=10)
+                if response.status_code == 200:
+                    results = response.json()
+                    # The API returns a list of lists: [[{'label': 'POSITIVE', 'score': 0.99}, ...]]
+                    if isinstance(results, list) and len(results) > 0 and isinstance(results[0], list):
+                        best_prediction = max(results[0], key=lambda x: x['score'])
+                        label = best_prediction['label']
+                        score = best_prediction['score']
+            else:
+                print("Warning: HF_TOKEN not set. Using fallback values.")
+        except Exception as e:
+            print(f"HF API Error: {e}")
+            
+        # Heuristics derived from raw text
         text_lower = text.lower()
         passive = ["thanks for", "appreciate it", "everyone else", "once again", "as usual", "last minute"]
         humor = ["haha", "lol", "lmao", "i'll survive", "could be worse"]
