@@ -5,7 +5,7 @@ import { SettingsModal } from "./SettingsModal";
 
 const navLinks = [
   { label: "Home", href: "#home" },
-  { label: "Analyzer", href: "#demo" },
+  { label: "Analyzer", href: "#analyzer" },
   { label: "Methodology", href: "#pipeline" },
   { label: "Research", href: "#research" },
   { label: "Use Cases", href: "#usecases" },
