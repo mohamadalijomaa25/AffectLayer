@@ -15,7 +15,7 @@ interface Props {
 const engineConfig = {
   classical: {
     label: "Classical",
-    sublabel: "Rule-Based Lexicon",
+    sublabel: "Rule-Based Lexicon (Python Backend)",
     icon: Cpu,
     color: "text-cyan",
     gradient: "from-cyan to-blue",
@@ -27,13 +27,13 @@ const engineConfig = {
   },
   ml: {
     label: "ML Model",
-    sublabel: "DistilBERT (SST-2)",
+    sublabel: "DistilBERT (Python Backend)",
     icon: Brain,
     color: "text-pink",
     gradient: "from-pink to-violet",
     border: "border-pink/40",
     bg: "bg-pink/10",
-    description: "DistilBERT transformer fine-tuned on SST-2, running entirely in-browser via Transformers.js.",
+    description: "DistilBERT transformer fine-tuned on SST-2, running via Python FastAPI backend.",
     badge: "Contemporary ML",
     badgeColor: "bg-pink/10 text-pink border-pink/20",
   },
@@ -233,30 +233,6 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         </div>
 
         <div id="analysis-output" ref={scrollRef} className="scroll-mt-24" />
-
-        {/* ML Progress Bar */}
-        {state === "loading" && engine === "ml" && mlProgress && (
-          <div className="mt-8 glass-card p-8 space-y-4 animate-fade-in">
-            <div className="flex items-center gap-3">
-              <Brain className="w-5 h-5 text-pink animate-pulse" />
-              <p className="text-sm font-medium text-foreground">Loading DistilBERT Model</p>
-              <span className="ml-auto text-xs text-muted-foreground">{mlProgress.progress ?? 0}%</span>
-            </div>
-            <div className="w-full h-2 rounded-full bg-secondary overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-pink to-violet transition-all duration-700"
-                style={{ width: `${mlProgress.progress ?? 0}%` }}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">{mlProgress.message}</p>
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
-              <span className="text-amber-400 text-xs">ℹ</span>
-              <p className="text-xs text-muted-foreground/80">
-                <span className="text-amber-400 font-medium">First-time use only:</span> The quantized DistilBERT model (~22MB) is being downloaded from Hugging Face. It will be cached permanently in your browser after this.
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Gemini Loading Steps */}
         {state === "loading" && engine === "gemini" && (
