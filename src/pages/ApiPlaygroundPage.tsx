@@ -67,13 +67,13 @@ const ApiPlaygroundPage = () => {
 
               <div className="space-y-3">
                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Payload (JSON)</label>
-                <div className="space-y-4 p-4 bg-[#0d1117] rounded-lg border border-border/50 font-mono text-sm shadow-inner">
+                <div className="space-y-4 p-4 bg-secondary/30 dark:bg-[#0d1117] rounded-lg border border-border/50 font-mono text-sm shadow-inner">
                   <div className="flex flex-col gap-2">
                     <span className="text-cyan">"text"</span>
                     <textarea
                       value={text}
                       onChange={(e) => setText(e.target.value)}
-                      className="w-full bg-transparent border border-border/40 rounded-md p-2 text-slate-200 focus:outline-none focus:border-violet/50 resize-none h-20"
+                      className="w-full bg-transparent border border-border/40 rounded-md p-2 text-foreground dark:text-slate-200 focus:outline-none focus:border-violet/50 resize-none h-20"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -121,8 +121,8 @@ const ApiPlaygroundPage = () => {
 
           {/* JSON Response */}
           <div className="glass-card flex flex-col overflow-hidden border-border/50 h-[600px] lg:h-auto">
-            <div className="bg-[#0d1117] px-4 py-3 border-b border-border/30 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
+            <div className="bg-secondary/50 dark:bg-[#0d1117] px-4 py-3 border-b border-border/30 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground/80 dark:text-slate-300">
                 <FileJson className="w-4 h-4 text-green-400" />
                 Response
               </div>
@@ -133,25 +133,25 @@ const ApiPlaygroundPage = () => {
               </div>
             </div>
             
-            <div className="p-4 flex-1 overflow-auto bg-[#0d1117] font-mono text-sm custom-scrollbar">
+            <div className="p-4 flex-1 overflow-auto bg-secondary/30 dark:bg-[#0d1117] font-mono text-sm custom-scrollbar">
               {response ? (
-                <pre className="text-slate-200 whitespace-pre-wrap break-words">
+                <pre className="text-foreground/90 dark:text-slate-200 whitespace-pre-wrap break-words">
                   {JSON.stringify(response, null, 2).split('\n').map((line, i) => {
                     // Simple syntax highlighting for JSON keys
                     if (line.includes('":')) {
                       const parts = line.split(':');
                       return (
                         <div key={i} className="leading-relaxed">
-                          <span className="text-cyan/90">{parts[0]}</span>:
-                          <span className={parts[1].includes('"') ? "text-green-300/90" : "text-pink/90"}>{parts.slice(1).join(':')}</span>
+                          <span className="text-cyan-700 dark:text-cyan/90">{parts[0]}</span>:
+                          <span className={parts[1].includes('"') ? "text-green-700 dark:text-green-300/90" : "text-pink-600 dark:text-pink/90"}>{parts.slice(1).join(':')}</span>
                         </div>
                       );
                     }
-                    return <div key={i} className="text-slate-400 leading-relaxed">{line}</div>;
+                    return <div key={i} className="text-foreground/60 dark:text-slate-400 leading-relaxed">{line}</div>;
                   })}
                 </pre>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-3 opacity-50">
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground dark:text-slate-500 gap-3 opacity-50">
                   <Code className="w-12 h-12" />
                   <p>Hit "Send Request" to view raw JSON</p>
                 </div>
