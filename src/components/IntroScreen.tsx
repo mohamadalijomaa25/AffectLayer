@@ -16,7 +16,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070b14] overflow-hidden transition-opacity duration-700 ease-in-out ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background overflow-hidden transition-opacity duration-700 ease-in-out ${
         phase === "fadeout" ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
@@ -64,7 +64,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.07]"
         style={{
-          backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
           backgroundSize: "32px 32px",
         }}
       />
@@ -73,7 +73,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 30%, #070b14 100%)",
+          background: "radial-gradient(ellipse at center, transparent 30%, hsl(var(--background)) 100%)",
         }}
       />
 
@@ -91,10 +91,10 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
 
       {/* ── Brand name ── */}
       <div className="relative z-10 mt-24 flex flex-col items-center gap-3 animate-[fadeUp_0.7s_ease-out_0.4s_both]">
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-white">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground">
           Affect<span className="gradient-text">Layer</span>
         </h1>
-        <p className="text-sm text-white/40 tracking-[0.3em] uppercase">
+        <p className="text-sm text-foreground/40 tracking-[0.3em] uppercase font-medium">
           Hidden Emotion Detection
         </p>
       </div>
@@ -103,7 +103,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       <div className={`relative z-10 mt-12 transition-all duration-500 ${ready ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
         <button
           onClick={handleEnter}
-          className="group px-10 py-3.5 rounded-xl border border-violet/40 bg-violet/10 hover:bg-violet/20 text-white font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:border-violet/70 hover:shadow-[0_0_32px_rgba(139,92,246,0.4)] cursor-pointer"
+          className="group px-10 py-3.5 rounded-xl border border-violet/40 bg-violet/10 hover:bg-violet/20 text-foreground font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:border-violet/70 hover:shadow-[0_0_32px_rgba(139,92,246,0.4)] cursor-pointer"
         >
           <span className="gradient-text">Enter</span>
           <span className="ml-2 inline-block group-hover:translate-x-1 transition-transform duration-200">→</span>
