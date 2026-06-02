@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, MessageSquare, Cpu, Brain, Sparkles, ChevronRight } from "lucide-react";
+import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, MessageSquare, Cpu, Brain, Sparkles, ChevronRight, Volume2, VolumeX } from "lucide-react";
 import { analyzeText, loadingMessages, exampleSamples, type AnalysisResult } from "@/lib/analyzer";
 import { classicalAnalyzeText } from "@/lib/classicalAnalyzer";
 import { mlAnalyzeText, type MLProgress } from "@/lib/mlAnalyzer";
@@ -93,6 +93,33 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
       return () => clearTimeout(t);
     }
   }, [currentResult]);
+
+  // Text-to-speech
+  const [speaking, setSpeaking] = useState(false);
+  const handleSpeak = () => {
+    if (!input.trim()) return;
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(input);
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
+    // Prefer a natural English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("Google"))
+    );
+    if (preferred) utterance.voice = preferred;
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    setSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Stop speaking on unmount
+  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
 
   useEffect(() => {
     if (exampleText) {
@@ -238,12 +265,27 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
 
         {/* Input and Action Buttons */}
         <div className="glass-card p-6 md:p-8 space-y-6">
-          <textarea
-            value={input}
-            onChange={e => handleTextChange(e.target.value)}
-            placeholder={`Try: "Haha it's okay, I'm used to being left out." or "Thanks so much for sending this at the last possible minute."`}
-            className="w-full h-32 bg-secondary/50 border border-border rounded-lg p-4 text-foreground text-sm placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-1 focus:ring-violet/40 transition-all"
-          />
+          <div className="relative">
+            <textarea
+              value={input}
+              onChange={e => handleTextChange(e.target.value)}
+              placeholder={`Try: "Haha it's okay, I'm used to being left out." or "Thanks so much for sending this at the last possible minute."`}
+              className="w-full h-32 bg-secondary/50 border border-border rounded-lg p-4 pr-14 text-foreground text-sm placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-1 focus:ring-violet/40 transition-all"
+            />
+            {/* Speak button inside textarea corner */}
+            <button
+              onClick={handleSpeak}
+              disabled={!input.trim()}
+              title={speaking ? "Stop speaking" : "Speak text aloud"}
+              className={`absolute bottom-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 disabled:opacity-30 ${
+                speaking
+                  ? "bg-pink/20 border border-pink/40 text-pink animate-pulse"
+                  : "bg-secondary border border-border text-muted-foreground hover:text-foreground hover:border-violet/40 hover:bg-violet/10"
+              }`}
+            >
+              {speaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+          </div>
 
           <div className="flex flex-wrap gap-3">
             <button
