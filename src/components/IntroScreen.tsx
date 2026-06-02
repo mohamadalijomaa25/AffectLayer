@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 
 const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState<"visible" | "fadeout">("visible");
+  const [ready, setReady] = useState(false);
 
+  // Show the "Enter" button after animations settle
   useEffect(() => {
-    // Start fade-out after 3.8s
-    const fadeTimer = setTimeout(() => setPhase("fadeout"), 3800);
-    // Notify parent to unmount after fade completes
-    const doneTimer = setTimeout(() => onComplete(), 4600);
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(doneTimer);
-    };
-  }, [onComplete]);
+    const readyTimer = setTimeout(() => setReady(true), 900);
+    return () => clearTimeout(readyTimer);
+  }, []);
+
+  const handleEnter = () => {
+    setPhase("fadeout");
+    setTimeout(() => onComplete(), 700);
+  };
 
   return (
     <div
@@ -28,7 +29,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       <div className="relative flex items-center justify-center">
         {/* Outer spinning ring */}
         <div className="absolute w-64 h-64 rounded-full border border-violet/20 animate-spin" style={{ animationDuration: "6s" }} />
-        {/* Middle pulsing ring */}
+        {/* Middle counter-rotating ring */}
         <div className="absolute w-52 h-52 rounded-full border border-cyan/20 animate-spin" style={{ animationDuration: "10s", animationDirection: "reverse" }} />
         {/* Inner pulsing ring */}
         <div className="absolute w-44 h-44 rounded-full border border-pink/20 animate-ping" style={{ animationDuration: "2.2s" }} />
@@ -51,9 +52,17 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
         </p>
       </div>
 
-      {/* Bottom loading bar */}
-      <div className="absolute bottom-12 w-56 h-px bg-border overflow-hidden rounded-full">
-        <div className="h-full bg-gradient-to-r from-violet via-cyan to-pink animate-[loadBar_3.6s_ease-in-out_forwards]" />
+      {/* Click-to-Enter button */}
+      <div
+        className={`mt-12 transition-all duration-500 ${ready ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+      >
+        <button
+          onClick={handleEnter}
+          className="group relative px-10 py-3.5 rounded-xl border border-violet/40 bg-violet/10 hover:bg-violet/20 text-foreground font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:border-violet/70 hover:shadow-[0_0_24px_rgba(139,92,246,0.3)] cursor-pointer"
+        >
+          <span className="gradient-text">Enter</span>
+          <span className="ml-2 inline-block group-hover:translate-x-1 transition-transform duration-200">→</span>
+        </button>
       </div>
     </div>
   );
