@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Swords, Loader2, CheckCircle2, XCircle, Brain, Bot, Cpu } from "lucide-react";
-import { analyzeText, AnalysisResult } from "@/lib/analyzer";
+import { Swords, Loader2, CheckCircle2, XCircle, Brain, Bot, Cpu, Shuffle } from "lucide-react";
+import { analyzeText, AnalysisResult, exampleSamples } from "@/lib/analyzer";
 
 const ShowdownPage = () => {
   const [text, setText] = useState("Haha don't worry about me, I'll survive.");
@@ -47,6 +47,11 @@ const ShowdownPage = () => {
       setResults(prev => ({ ...prev, gemini: data }));
       setLoading(prev => ({ ...prev, gemini: false }));
     }).catch(() => setLoading(prev => ({ ...prev, gemini: false })));
+  };
+
+  const loadRandomExample = () => {
+    const random = exampleSamples[Math.floor(Math.random() * exampleSamples.length)];
+    setText(random.text);
   };
 
   const ResultCard = ({ title, icon: Icon, data, isLoading, colorClass, borderClass, isWinner }: { title: string, icon: any, data: AnalysisResult | null, isLoading: boolean, colorClass: string, borderClass: string, isWinner?: boolean }) => (
@@ -126,19 +131,27 @@ const ShowdownPage = () => {
         </div>
 
         {/* Input Section */}
-        <div className="glass-card p-2 p-1.5 md:p-2 mb-12 flex flex-col md:flex-row gap-2 max-w-4xl mx-auto">
+        <div className="glass-card p-2 p-1.5 md:p-2 mb-12 flex flex-col md:flex-row gap-2 max-w-5xl mx-auto">
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter a masked sentence (e.g. 'I'm fine, really.')"
-            className="flex-1 bg-transparent border-none px-4 py-3 text-foreground focus:ring-0 focus:outline-none placeholder:text-muted-foreground/50"
+            className="flex-1 bg-transparent border-none px-4 py-3 text-foreground focus:ring-0 focus:outline-none placeholder:text-muted-foreground/50 min-w-0"
             onKeyDown={(e) => e.key === "Enter" && runShowdown()}
           />
           <button
+            onClick={loadRandomExample}
+            disabled={Object.values(loading).some(l => l)}
+            className="md:w-auto w-full px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium hover:bg-secondary/80 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            <Shuffle className="w-4 h-4" />
+            Random Example
+          </button>
+          <button
             onClick={runShowdown}
             disabled={Object.values(loading).some(l => l) || !text.trim()}
-            className="md:w-auto w-full px-8 py-3 rounded-lg bg-foreground text-background font-medium hover:bg-foreground/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="md:w-auto w-full px-8 py-3 rounded-lg bg-foreground text-background font-medium hover:bg-foreground/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             {Object.values(loading).some(l => l) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Swords className="w-4 h-4" />}
             Run Showdown
