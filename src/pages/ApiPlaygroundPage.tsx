@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Terminal, Play, Server, Code, FileJson } from "lucide-react";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
 const ApiPlaygroundPage = () => {
   const [text, setText] = useState("Haha it's okay, I'm used to being ignored.");
   const [engine, setEngine] = useState<"classical" | "ml">("ml");
@@ -11,7 +13,7 @@ const ApiPlaygroundPage = () => {
     setLoading(true);
     setResponse(null);
     try {
-      const res = await fetch("http://localhost:8000/api/analyze", {
+      const res = await fetch(`${API_URL}/api/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, engine }),

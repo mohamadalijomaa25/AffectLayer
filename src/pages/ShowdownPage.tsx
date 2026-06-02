@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Swords, Loader2, CheckCircle2, XCircle, Brain, Bot, Cpu, Shuffle } from "lucide-react";
 import { analyzeText, AnalysisResult, exampleSamples } from "@/lib/analyzer";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
 const ShowdownPage = () => {
   const [text, setText] = useState("Haha don't worry about me, I'll survive.");
   const [results, setResults] = useState<{
@@ -23,7 +25,7 @@ const ShowdownPage = () => {
     setResults({ classical: null, ml: null, gemini: null });
 
     // 1. Classical Engine
-    fetch("http://localhost:8000/api/analyze", {
+    fetch(`${API_URL}/api/analyze`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, engine: "classical" })
@@ -33,7 +35,7 @@ const ShowdownPage = () => {
     }).catch(() => setLoading(prev => ({ ...prev, classical: false })));
 
     // 2. ML Engine
-    fetch("http://localhost:8000/api/analyze", {
+    fetch(`${API_URL}/api/analyze`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, engine: "ml" })
