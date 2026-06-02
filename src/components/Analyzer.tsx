@@ -3,6 +3,7 @@ import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, Me
 import { analyzeText, loadingMessages, exampleSamples, type AnalysisResult } from "@/lib/analyzer";
 import { classicalAnalyzeText } from "@/lib/classicalAnalyzer";
 import { mlAnalyzeText, type MLProgress } from "@/lib/mlAnalyzer";
+import EmotionWordCloud from "@/components/EmotionWordCloud";
 
 type Engine = "classical" | "ml" | "gemini";
 
@@ -82,6 +83,16 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
   const currentResult = results[engine];
   const currentLoading = loadingStates[engine];
   const currentError = errorMsgs[engine];
+
+  // Animate confidence bars from 0 to final value on new result
+  const [barWidth, setBarWidth] = useState(0);
+  useEffect(() => {
+    if (currentResult) {
+      setBarWidth(0);
+      const t = setTimeout(() => setBarWidth(1), 60);
+      return () => clearTimeout(t);
+    }
+  }, [currentResult]);
 
   useEffect(() => {
     if (exampleText) {
@@ -305,7 +316,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                 <div className="text-2xl font-heading font-bold text-foreground">{currentResult.surfaceEmotion.label}</div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-cyan to-cyan/60 transition-all duration-700" style={{ width: `${currentResult.surfaceEmotion.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-cyan to-cyan/60 transition-all duration-1000 ease-out" style={{ width: barWidth ? `${currentResult.surfaceEmotion.confidence}%` : "0%" }} />
                   </div>
                   <span className="text-xs text-cyan font-medium">{currentResult.surfaceEmotion.confidence}%</span>
                 </div>
@@ -324,7 +335,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-pink to-pink/60 transition-all duration-700" style={{ width: `${currentResult.hiddenEmotion.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-pink to-pink/60 transition-all duration-1000 ease-out" style={{ width: barWidth ? `${currentResult.hiddenEmotion.confidence}%` : "0%" }} />
                   </div>
                   <span className="text-xs text-pink font-medium">{currentResult.hiddenEmotion.confidence}%</span>
                 </div>
@@ -339,7 +350,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                 <div className="text-2xl font-heading font-bold text-foreground">{currentResult.maskingStyle.label}</div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-violet to-violet/60 transition-all duration-700" style={{ width: `${currentResult.maskingStyle.confidence}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-r from-violet to-violet/60 transition-all duration-1000 ease-out" style={{ width: barWidth ? `${currentResult.maskingStyle.confidence}%` : "0%" }} />
                   </div>
                   <span className="text-xs text-violet font-medium">{currentResult.maskingStyle.confidence}%</span>
                 </div>
@@ -381,6 +392,9 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                 </div>
               </div>
             )}
+
+            {/* Emotion Word Cloud */}
+            <EmotionWordCloud result={currentResult} />
 
             {/* Confidence Summary */}
             <div className="glass-card-hover p-5 space-y-4">
