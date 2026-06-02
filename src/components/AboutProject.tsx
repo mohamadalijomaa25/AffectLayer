@@ -25,11 +25,12 @@ const AboutProject = () => {
           </div>
 
           <div className="glass-card p-6 space-y-4">
-            <h3 className="font-heading font-semibold text-foreground text-lg">Researcher</h3>
+            <h3 className="font-heading font-semibold text-foreground text-lg">Researchers</h3>
             <div className="space-y-3">
               <div className="space-y-2">
                 {[
                   { label: "Student", value: "Mohamad-Ali Jomaa" },
+                  { label: "Student", value: "Jawad Al Moussawi" },
                   { label: "Supervisor", value: "Dr. Zeinab Hajj Hassan" },
                   { label: "University", value: "Lebanese International University (LIU)" },
                   { label: "Program", value: "Computer Science / NLP" },
