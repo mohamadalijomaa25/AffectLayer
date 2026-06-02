@@ -12,6 +12,8 @@ import ResearchPage from "./pages/ResearchPage";
 import UseCasesPage from "./pages/UseCasesPage";
 import DatasetPage from "./pages/DatasetPage";
 import AboutPage from "./pages/AboutPage";
+import ShowdownPage from "./pages/ShowdownPage";
+import ApiPlaygroundPage from "./pages/ApiPlaygroundPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +30,9 @@ const App = () => (
             <Route path="/analyzer" element={<AnalyzerPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/engines" element={<EnginesPage />} />
+            <Route path="/showdown" element={<ShowdownPage />} />
             <Route path="/research" element={<ResearchPage />} />
+            <Route path="/api-playground" element={<ApiPlaygroundPage />} />
             <Route path="/use-cases" element={<UseCasesPage />} />
             <Route path="/dataset" element={<DatasetPage />} />
             <Route path="/about" element={<AboutPage />} />

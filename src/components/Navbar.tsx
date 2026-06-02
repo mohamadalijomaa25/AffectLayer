@@ -7,11 +7,11 @@ import { SettingsModal } from "./SettingsModal";
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Analyzer", path: "/analyzer" },
-  { label: "Methodology", path: "/methodology" },
+  { label: "Showdown", path: "/showdown" },
   { label: "Engines", path: "/engines" },
+  { label: "API Docs", path: "/api-playground" },
   { label: "Research", path: "/research" },
   { label: "Use Cases", path: "/use-cases" },
-  { label: "Architecture", path: "/dataset" },
   { label: "About", path: "/about" },
 ];
 
