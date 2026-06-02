@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Engines", href: "#architecture-engines" },
   { label: "Research", href: "#research" },
   { label: "Use Cases", href: "#usecases" },
-  { label: "Dataset", href: "#dataset-model" },
+  { label: "Architecture", href: "#dataset-model" },
   { label: "About", href: "#about" },
 ];
 
