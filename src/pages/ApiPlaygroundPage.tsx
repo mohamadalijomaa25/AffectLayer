@@ -73,7 +73,7 @@ const ApiPlaygroundPage = () => {
                     <textarea
                       value={text}
                       onChange={(e) => setText(e.target.value)}
-                      className="w-full bg-transparent border border-border/40 rounded-md p-2 text-foreground focus:outline-none focus:border-violet/50 resize-none h-20"
+                      className="w-full bg-transparent border border-border/40 rounded-md p-2 text-slate-200 focus:outline-none focus:border-violet/50 resize-none h-20"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -122,7 +122,7 @@ const ApiPlaygroundPage = () => {
           {/* JSON Response */}
           <div className="glass-card flex flex-col overflow-hidden border-border/50 h-[600px] lg:h-auto">
             <div className="bg-[#0d1117] px-4 py-3 border-b border-border/30 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground/80">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
                 <FileJson className="w-4 h-4 text-green-400" />
                 Response
               </div>
@@ -135,7 +135,7 @@ const ApiPlaygroundPage = () => {
             
             <div className="p-4 flex-1 overflow-auto bg-[#0d1117] font-mono text-sm custom-scrollbar">
               {response ? (
-                <pre className="text-foreground/90 whitespace-pre-wrap break-words">
+                <pre className="text-slate-200 whitespace-pre-wrap break-words">
                   {JSON.stringify(response, null, 2).split('\n').map((line, i) => {
                     // Simple syntax highlighting for JSON keys
                     if (line.includes('":')) {
@@ -147,11 +147,11 @@ const ApiPlaygroundPage = () => {
                         </div>
                       );
                     }
-                    return <div key={i} className="text-foreground/60 leading-relaxed">{line}</div>;
+                    return <div key={i} className="text-slate-400 leading-relaxed">{line}</div>;
                   })}
                 </pre>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3 opacity-50">
+                <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-3 opacity-50">
                   <Code className="w-12 h-12" />
                   <p>Hit "Send Request" to view raw JSON</p>
                 </div>
