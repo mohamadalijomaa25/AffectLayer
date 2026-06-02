@@ -1,11 +1,13 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+# Initialize analyzer globally so it doesn't reload the lexicon file on every request
+analyzer = SentimentIntensityAnalyzer()
+
 def classical_analyze(text):
     """
     Classical rule-based lexicon approach using VADER sentiment analyzer 
     and custom heuristic rules for emotional masking.
     """
-    analyzer = SentimentIntensityAnalyzer()
     scores = analyzer.polarity_scores(text)
     
     text_lower = text.lower()
