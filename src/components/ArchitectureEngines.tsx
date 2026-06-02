@@ -53,7 +53,7 @@ const ArchitectureEngines = () => {
     <section id="architecture-engines" className="section-padding bg-secondary/30 border-y border-border/50">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 space-y-3">
-          <h2 className="section-title">Architecture & <span className="gradient-text">Engines</span></h2>
+          <h2 className="section-title">Engine <span className="gradient-text">Deep Dive</span></h2>
           <p className="section-subtitle mx-auto">A deep dive into the mechanics, training data, and inner workings of all three engines powering the platform.</p>
         </div>
 
