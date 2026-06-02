@@ -42,7 +42,7 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       </div>
 
       {/* Brand name */}
-      <div className="mt-12 flex flex-col items-center gap-3 animate-[fadeUp_0.7s_ease-out_0.4s_both]">
+      <div className="mt-24 flex flex-col items-center gap-3 animate-[fadeUp_0.7s_ease-out_0.4s_both]">
         <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground">
           Affect<span className="gradient-text">Layer</span>
         </h1>
