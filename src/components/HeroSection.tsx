@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 const floatingChips = [
@@ -36,13 +37,13 @@ const HeroSection = () => {
               A multi-stage NLP system that identifies the mismatch between explicit tone and latent affect, combining emotion recognition, sarcasm detection, and explainable inference.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
-              <a href="#analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-violet to-primary text-primary-foreground font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-violet/25 hover:-translate-y-0.5">
+              <Link to="/analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-violet to-primary text-primary-foreground font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-violet/25 hover:-translate-y-0.5">
                 Try Analyzer
                 <ArrowRight className="w-4 h-4" />
-              </a>
-              <a href="#research" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground font-medium text-sm transition-all duration-300 hover:bg-secondary hover:-translate-y-0.5">
+              </Link>
+              <Link to="/research" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground font-medium text-sm transition-all duration-300 hover:bg-secondary hover:-translate-y-0.5">
                 Explore Research
-              </a>
+              </Link>
             </div>
           </div>
 
