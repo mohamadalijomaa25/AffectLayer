@@ -12,13 +12,14 @@ import EthicsSection from "@/components/EthicsSection";
 import DatasetModel from "@/components/DatasetModel";
 import AboutProject from "@/components/AboutProject";
 import FooterSection from "@/components/FooterSection";
+import IntroScreen from "@/components/IntroScreen";
 import type { AnalysisResult } from "@/lib/analyzer";
-
 import { ThemeProvider } from "@/components/theme-provider";
 
 const Index = () => {
   const [exampleText, setExampleText] = useState("");
   const [latestResult, setLatestResult] = useState<AnalysisResult | null>(null);
+  const [showIntro, setShowIntro] = useState(true);
 
   const handleExampleSelect = useCallback((text: string) => {
     setExampleText(text);
@@ -26,6 +27,7 @@ const Index = () => {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="affectlayer-theme">
+      {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
         <Navbar />
         <HeroSection />
