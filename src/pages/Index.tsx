@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import Analyzer from "@/components/Analyzer";
 import ExampleSamples from "@/components/ExampleSamples";
 import PipelineSection from "@/components/PipelineSection";
+import ArchitectureEngines from "@/components/ArchitectureEngines";
 import ResearchContribution from "@/components/ResearchContribution";
 import VisualizationPanel from "@/components/VisualizationPanel";
 import UseCases from "@/components/UseCases";
@@ -35,6 +36,7 @@ const Index = () => {
         />
         <ExampleSamples onSelect={handleExampleSelect} />
         <PipelineSection />
+        <ArchitectureEngines />
         <ResearchContribution />
         <VisualizationPanel latestResult={latestResult} />
         <UseCases />

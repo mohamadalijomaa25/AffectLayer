@@ -7,9 +7,10 @@ const navLinks = [
   { label: "Home", href: "#home" },
   { label: "Analyzer", href: "#analyzer" },
   { label: "Methodology", href: "#pipeline" },
+  { label: "Engines", href: "#architecture-engines" },
   { label: "Research", href: "#research" },
   { label: "Use Cases", href: "#usecases" },
-  { label: "Architecture", href: "#dataset-model" },
+  { label: "Dataset", href: "#dataset-model" },
   { label: "About", href: "#about" },
 ];
 
