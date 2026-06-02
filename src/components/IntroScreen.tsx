@@ -4,10 +4,10 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState<"visible" | "fadeout">("visible");
 
   useEffect(() => {
-    // Start fade-out after 2.4s
-    const fadeTimer = setTimeout(() => setPhase("fadeout"), 2400);
+    // Start fade-out after 3.8s
+    const fadeTimer = setTimeout(() => setPhase("fadeout"), 3800);
     // Notify parent to unmount after fade completes
-    const doneTimer = setTimeout(() => onComplete(), 3200);
+    const doneTimer = setTimeout(() => onComplete(), 4600);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(doneTimer);
@@ -21,37 +21,39 @@ const IntroScreen = ({ onComplete }: { onComplete: () => void }) => {
       }`}
     >
       {/* Radial glow behind logo */}
-      <div className="absolute w-72 h-72 rounded-full bg-violet/10 blur-3xl animate-pulse" />
-      <div className="absolute w-48 h-48 rounded-full bg-cyan/10 blur-2xl animate-pulse delay-300" />
+      <div className="absolute w-96 h-96 rounded-full bg-violet/10 blur-3xl animate-pulse" />
+      <div className="absolute w-72 h-72 rounded-full bg-cyan/10 blur-2xl animate-pulse delay-300" />
 
       {/* Logo + ring animation */}
       <div className="relative flex items-center justify-center">
         {/* Outer spinning ring */}
-        <div className="absolute w-40 h-40 rounded-full border border-violet/20 animate-spin" style={{ animationDuration: "6s" }} />
+        <div className="absolute w-64 h-64 rounded-full border border-violet/20 animate-spin" style={{ animationDuration: "6s" }} />
+        {/* Middle pulsing ring */}
+        <div className="absolute w-52 h-52 rounded-full border border-cyan/20 animate-spin" style={{ animationDuration: "10s", animationDirection: "reverse" }} />
         {/* Inner pulsing ring */}
-        <div className="absolute w-28 h-28 rounded-full border border-cyan/30 animate-ping" style={{ animationDuration: "1.8s" }} />
+        <div className="absolute w-44 h-44 rounded-full border border-pink/20 animate-ping" style={{ animationDuration: "2.2s" }} />
 
         {/* Favicon */}
         <img
           src="/favicon.png"
           alt="AffectLayer"
-          className="relative w-20 h-20 object-contain drop-shadow-2xl animate-[fadeInScale_0.6s_ease-out_forwards]"
+          className="relative w-36 h-36 object-contain drop-shadow-2xl animate-[fadeInScale_0.6s_ease-out_forwards]"
         />
       </div>
 
       {/* Brand name */}
-      <div className="mt-10 flex flex-col items-center gap-2 animate-[fadeUp_0.7s_ease-out_0.4s_both]">
-        <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">
-          Affect<span className="text-violet">Layer</span>
+      <div className="mt-12 flex flex-col items-center gap-3 animate-[fadeUp_0.7s_ease-out_0.4s_both]">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground">
+          Affect<span className="gradient-text">Layer</span>
         </h1>
-        <p className="text-xs text-muted-foreground tracking-[0.25em] uppercase">
+        <p className="text-sm text-muted-foreground tracking-[0.3em] uppercase">
           Hidden Emotion Detection
         </p>
       </div>
 
       {/* Bottom loading bar */}
-      <div className="absolute bottom-12 w-40 h-px bg-border overflow-hidden rounded-full">
-        <div className="h-full bg-gradient-to-r from-violet via-cyan to-pink animate-[loadBar_2.2s_ease-in-out_forwards]" />
+      <div className="absolute bottom-12 w-56 h-px bg-border overflow-hidden rounded-full">
+        <div className="h-full bg-gradient-to-r from-violet via-cyan to-pink animate-[loadBar_3.6s_ease-in-out_forwards]" />
       </div>
     </div>
   );
