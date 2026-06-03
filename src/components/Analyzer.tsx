@@ -4,6 +4,7 @@ import { analyzeText, loadingMessages, exampleSamples, type AnalysisResult } fro
 import { classicalAnalyzeText } from "@/lib/classicalAnalyzer";
 import { mlAnalyzeText, type MLProgress } from "@/lib/mlAnalyzer";
 import EmotionWordCloud from "@/components/EmotionWordCloud";
+import EnvelopeCard from "@/components/EnvelopeCard";
 
 type Engine = "classical" | "ml" | "gemini";
 
@@ -397,7 +398,12 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
 
             <div className="grid md:grid-cols-3 gap-4">
               {/* Surface Emotion */}
-              <div className="glass-card-hover p-5 space-y-3">
+              <EnvelopeCard 
+                title="Surface Emotion" 
+                icon={<Layers className="w-4 h-4" />} 
+                colorClass="text-cyan" 
+                resetDependency={currentResult}
+              >
                 <div className="flex items-center gap-2 text-cyan">
                   <Layers className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Surface Emotion</span>
@@ -410,10 +416,15 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   <span className="text-xs text-cyan font-medium">{currentResult.surfaceEmotion.confidence}%</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{currentResult.surfaceEmotion.explanation}</p>
-              </div>
+              </EnvelopeCard>
 
               {/* Hidden Emotion */}
-              <div className="glass-card-hover p-5 space-y-3">
+              <EnvelopeCard 
+                title="Hidden Emotion" 
+                icon={<Target className="w-4 h-4" />} 
+                colorClass="text-pink" 
+                resetDependency={currentResult}
+              >
                 <div className="flex items-center gap-2 text-pink">
                   <Target className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Hidden Emotion</span>
@@ -428,10 +439,16 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   </div>
                   <span className="text-xs text-pink font-medium">{currentResult.hiddenEmotion.confidence}%</span>
                 </div>
-              </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{currentResult.hiddenEmotion.explanation}</p>
+              </EnvelopeCard>
 
               {/* Masking Style */}
-              <div className="glass-card-hover p-5 space-y-3">
+              <EnvelopeCard 
+                title="Masking Style" 
+                icon={<AlertTriangle className="w-4 h-4" />} 
+                colorClass="text-violet" 
+                resetDependency={currentResult}
+              >
                 <div className="flex items-center gap-2 text-violet">
                   <AlertTriangle className="w-4 h-4" />
                   <span className="text-xs font-medium uppercase tracking-wider">Masking Style</span>
@@ -444,10 +461,9 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
                   <span className="text-xs text-violet font-medium">{currentResult.maskingStyle.confidence}%</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{currentResult.maskingStyle.definition}</p>
-              </div>
+              </EnvelopeCard>
             </div>
 
-            {/* Explanation */}
             <div className="glass-card-hover p-5 space-y-3">
               <div className="flex items-baseline justify-between gap-2">
                 <div className="flex items-center gap-2 text-blue">

@@ -36,6 +36,17 @@ class AnalyzeRequest(BaseModel):
     text: str
     engine: str # 'classical' or 'ml'
 
+def get_hidden_explanation(label: str) -> str:
+    mapping = {
+        "Neutral": "No hidden latent emotional mismatch detected in the text.",
+        "Frustration": "Subtle patterns of resentment or dissatisfaction are masked by polite language.",
+        "Sadness": "Indicators of underlying sorrow or grief are masked by positive surface indicators.",
+        "Distress / Sadness": "Indicators of underlying sorrow or grief are masked by positive surface indicators.",
+        "Hurt": "Vulnerability and pain are shielded by an outwardly composed surface.",
+        "Anxiety": "Undercurrents of worry or distress are masked by passive or neutral expressions."
+    }
+    return mapping.get(label, "Latent emotional state detected beneath the surface indicators.")
+
 @app.post("/api/analyze")
 def analyze_endpoint(req: AnalyzeRequest):
     text = req.text.strip()
@@ -56,7 +67,8 @@ def analyze_endpoint(req: AnalyzeRequest):
                 "hiddenEmotion": {
                     "label": result["hidden"],
                     "confidence": 65,
-                    "icon": "😶" if result["hidden"] == "Neutral" else "😤" if result["hidden"] == "Frustration" else "😢" if result["hidden"] == "Sadness" else "💔" if result["hidden"] == "Hurt" else "😰"
+                    "icon": "😶" if result["hidden"] == "Neutral" else "😤" if result["hidden"] == "Frustration" else "😢" if result["hidden"] == "Sadness" else "💔" if result["hidden"] == "Hurt" else "😰",
+                    "explanation": get_hidden_explanation(result["hidden"])
                 },
                 "maskingStyle": {
                     "label": result["masking"],
@@ -88,7 +100,8 @@ def analyze_endpoint(req: AnalyzeRequest):
                 "hiddenEmotion": {
                     "label": result["hidden"],
                     "confidence": 72 if result["hidden"] != "Neutral" else 40,
-                    "icon": "😶" if result["hidden"] == "Neutral" else "😤" if result["hidden"] == "Frustration" else "😢" if result["hidden"] in ["Sadness", "Distress / Sadness"] else "💔" if result["hidden"] == "Hurt" else "😰"
+                    "icon": "😶" if result["hidden"] == "Neutral" else "😤" if result["hidden"] == "Frustration" else "😢" if result["hidden"] in ["Sadness", "Distress / Sadness"] else "💔" if result["hidden"] == "Hurt" else "😰",
+                    "explanation": get_hidden_explanation(result["hidden"])
                 },
                 "maskingStyle": {
                     "label": result["masking"],

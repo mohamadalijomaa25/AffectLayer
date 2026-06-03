@@ -1,6 +1,6 @@
 export interface AnalysisResult {
   surfaceEmotion: { label: string; confidence: number; explanation: string };
-  hiddenEmotion: { label: string; confidence: number; icon: string };
+  hiddenEmotion: { label: string; confidence: number; icon: string; explanation: string };
   maskingStyle: { label: string; confidence: number; definition: string };
   explanation: string;
   explanationArabic?: string;
@@ -15,7 +15,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const defaultResult: AnalysisResult = {
   surfaceEmotion: { label: "Neutral", confidence: 72, explanation: "No strong positive or negative surface indicators detected." },
-  hiddenEmotion: { label: "Anxiety", confidence: 65, icon: "😰" },
+  hiddenEmotion: { label: "Anxiety", confidence: 65, icon: "😰", explanation: "Subtle linguistic patterns indicate suppressed feelings of worry or insecurity." },
   maskingStyle: { label: "Emotional Suppression", confidence: 68, definition: "Containing emotional responses through forced acceptance and detachment." },
   explanation: "The text presents a controlled, measured tone that may conceal underlying emotional tension. Subtle linguistic patterns suggest suppressed affect beneath an outwardly composed surface.",
   explanationArabic: "يقدم النص نبرة محكومة وموزونة قد تخفي توتراً عاطفياً كامناً. تشير الأنماط اللغوية الدقيقة إلى وجود تأثير مكبوت تحت سطح يبدو متماسكاً.",
@@ -41,7 +41,7 @@ Analyze the following text and return ONLY a raw JSON object (no markdown format
 
 {
   "surfaceEmotion": { "label": "String (e.g. Polite)", "confidence": Number 0-100, "explanation": "String explaining why" },
-  "hiddenEmotion": { "label": "String (e.g. Frustration)", "confidence": Number 0-100, "icon": "Emoji string" },
+  "hiddenEmotion": { "label": "String (e.g. Frustration)", "confidence": Number 0-100, "icon": "Emoji string", "explanation": "String explaining why this latent emotion is hidden" },
   "maskingStyle": {
     "label": "The coping mechanism (e.g., Sarcasm, Passive-Aggression, Minimization)",
     "confidence": 0-100,

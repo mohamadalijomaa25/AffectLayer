@@ -1,0 +1,53 @@
+What Mathematical Probability Does the ML Model Use?
+=====================================================
+
+Great question for your presentation! Here's the exact math behind it:
+
+DistilBERT uses SOFTMAX PROBABILITY
+-------------------------------------
+
+After DistilBERT processes the text, the final layer of the neural network outputs
+two raw numbers called LOGITS — one for NEGATIVE, one for POSITIVE.
+These are just arbitrary scores like:
+
+    logits = [-2.1,   3.8]
+               ^        ^
+            NEGATIVE  POSITIVE
+
+These raw numbers are meaningless on their own, so the model applies the
+SOFTMAX FUNCTION to convert them into probabilities that sum to exactly 1 (100%):
+
+    Softmax(x_i) = e^(x_i) / SUM( e^(x_j) )
+
+For the example above:
+
+    e^(-2.1) = 0.122
+    e^(3.8)  = 44.7
+
+    NEGATIVE = 0.122 / (0.122 + 44.7) = 0.0027  →  0.27%
+    POSITIVE = 44.7  / (0.122 + 44.7) = 0.9973  →  99.73%
+
+So the model returns: { "label": "POSITIVE", "score": 0.9973 }
+
+In your ml_analyzer.py (line 28), this is exactly what you capture:
+
+    best_prediction = max(results[0], key=lambda x: x['score'])
+    label = best_prediction['label']   # "POSITIVE"
+    score = best_prediction['score']   # 0.9973
+
+And then you multiply it by 100 to display it as a percentage in the UI:
+    round(score * 100)  →  99%
+
+
+KEY POINT FOR YOUR PRESENTATION
+---------------------------------
+The Softmax score is NOT the same as accuracy. A model can be 99.7% confident
+it's POSITIVE and still be completely wrong — like when someone says:
+
+    "Wow, great, another last-minute change."
+
+sarcastically. The model sees "Wow" and "great" and outputs 99% POSITIVE confidence.
+But the REAL hidden emotion is Frustration.
+
+That is exactly the research gap your project (AffectLayer) addresses —
+detecting the hidden emotion beneath a confidently wrong surface prediction.

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AffectLayer Walkthrough / دليل مشروع AffectLayer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&display=swap');
+  
+  body { 
+    font-family: 'Inter', Arial, sans-serif; 
+    margin: 40px; 
+    line-height: 1.6; 
+    color: #333;
+  }
+  
+  .bilingual-row { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 24px; 
+    border-bottom: 1px solid #eaeaea; 
+    padding-bottom: 16px; 
+    gap: 30px;
+  }
+  
+  .bilingual-row.no-border {
+    border-bottom: none;
+  }
+  
+  .en { 
+    flex: 1; 
+    text-align: left; 
+  }
+  
+  .ar { 
+    flex: 1; 
+    text-align: right; 
+    direction: rtl; 
+    font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  }
+  
+  h1 { font-size: 24px; color: #111; margin-bottom: 10px; }
+  h2 { font-size: 20px; color: #444; margin-bottom: 10px; }
+  h3 { font-size: 16px; color: #555; margin-bottom: 8px; }
+  p { font-size: 14px; margin-top: 0; }
+  
+  .code {
+    font-family: monospace;
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+    <div class="bilingual-row">
+        <div class="en"><h1>AffectLayer Project Walkthrough</h1></div>
+        <div class="ar"><h1>دليل مشروع AffectLayer</h1></div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <p>This document provides a comprehensive walkthrough of the AffectLayer project. It is designed to help you understand the architecture, the different AI engines, and the role of each file in the codebase so you can present it confidently.</p>
+        </div>
+        <div class="ar">
+            <p>يقدم هذا المستند جولة شاملة في مشروع AffectLayer. تم تصميمه لمساعدتك على فهم البنية، ومحركات الذكاء الاصطناعي المختلفة، ودور كل ملف في الكود المصدري حتى تتمكن من تقديمه بثقة في عرضك التقديمي.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h2>Project Overview</h2>
+            <p><strong>AffectLayer</strong> is a dual-stack NLP (Natural Language Processing) platform designed to identify hidden emotional distress that is concealed beneath polite or neutral surface language (emotional masking).</p>
+        </div>
+        <div class="ar">
+            <h2>نظرة عامة على المشروع</h2>
+            <p><strong>AffectLayer</strong> عبارة عن منصة لمعالجة اللغات الطبيعية (NLP) مزدوجة التكديس مصممة لتحديد الضيق العاطفي الخفي الذي يختبئ تحت لغة سطحية مهذبة أو محايدة (التقنيع العاطفي).</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h2>Tri-Engine Benchmarking</h2>
+            <p>Instead of relying on a single AI approach, it uses a Tri-Engine Benchmarking Architecture. This means it processes text through three different NLP technologies simultaneously, allowing users to compare their strengths and weaknesses.</p>
+        </div>
+        <div class="ar">
+            <h2>المعايرة باستخدام ثلاثة محركات</h2>
+            <p>بدلاً من الاعتماد على نهج ذكاء اصطناعي واحد، يستخدم المشروع بنية معايرة ثلاثية المحركات. وهذا يعني أنه يعالج النص عبر ثلاث تقنيات مختلفة لمعالجة اللغات في وقت واحد، مما يسمح للمستخدمين بمقارنة نقاط القوة والضعف لكل منها بشكل مباشر.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>1. Classical NLP (VADER)</h3>
+            <p>A rule-based lexicon running in the Python backend. It is very fast but lacks contextual understanding (often failing to detect sarcasm).</p>
+        </div>
+        <div class="ar">
+            <h3>1. المعالجة الكلاسيكية (VADER)</h3>
+            <p>معجم قائم على القواعد يعمل في الواجهة الخلفية (Python). وهو سريع جداً ولكنه يفتقر إلى الفهم السياقي (غالباً ما يفشل في اكتشاف السخرية لأنها تعتمد على القواعد الحرفية).</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>2. Machine Learning (DistilBERT)</h3>
+            <p>A Transformer-based neural network fine-tuned on the SST-2 dataset. It runs via the Hugging Face Serverless API, preventing the backend from crashing due to memory limits.</p>
+        </div>
+        <div class="ar">
+            <h3>2. التعلم الآلي (DistilBERT)</h3>
+            <p>شبكة عصبية تعتمد على المحولات (Transformer) تم ضبطها بدقة على مجموعة بيانات SST-2. يعمل عبر واجهة Hugging Face بدون خوادم، مما يمنع الواجهة الخلفية من التعطل بسبب قيود الذاكرة.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>3. Generative AI (Gemini 2.5)</h3>
+            <p>A zero-shot prompt-engineered LLM that runs directly from the client (frontend) using the Google API. It provides profound clinical reasoning and translates explanations to Arabic.</p>
+        </div>
+        <div class="ar">
+            <h3>3. الذكاء الاصطناعي التوليدي (Gemini 2.5)</h3>
+            <p>نموذج لغوي ضخم يعمل مباشرة من واجهة المستخدم باستخدام واجهة برمجة تطبيقات Google. يقدم تفكيراً سريرياً عميقاً ويقوم بترجمة التفسيرات إلى اللغة العربية ديناميكياً.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h2>Codebase Structure</h2>
+            <p>The project is divided into a React/Vite Frontend and a Python/FastAPI Backend.</p>
+        </div>
+        <div class="ar">
+            <h2>هيكل الكود المصدري وملفات المشروع</h2>
+            <p>ينقسم المشروع إلى واجهة أمامية مبنية باستخدام React/Vite وواجهة خلفية مبنية باستخدام Python/FastAPI.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>Root Configuration Files</h3>
+            <p>Files like <span class="code">package.json</span> and <span class="code">vite.config.ts</span> configure the tools used to build and run the project, like Vite (for fast builds) and Tailwind CSS (for styling without heavy frameworks).</p>
+        </div>
+        <div class="ar">
+            <h3>ملفات التكوين الأساسية</h3>
+            <p>تقوم ملفات مثل <span class="code">package.json</span> و <span class="code">vite.config.ts</span> بضبط الأدوات المستخدمة لبناء وتشغيل المشروع، مثل Vite (للبناء السريع) و Tailwind CSS (للتصميم دون الاعتماد على أطر عمل ثقيلة).</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>The Python Backend (<span class="code">backend/main.py</span>)</h3>
+            <p>This is the API server. It uses FastAPI to expose endpoints that the React frontend calls to get predictions from the Classical and ML engines.</p>
+        </div>
+        <div class="ar">
+            <h3>الواجهة الخلفية (<span class="code">backend/main.py</span>)</h3>
+            <p>هذا هو خادم واجهة برمجة التطبيقات (API). يستخدم FastAPI لتوفير نقاط اتصال تستدعيها الواجهة الأمامية (React) للحصول على التنبؤات من المحركات الكلاسيكية ومحركات تعلم الآلة.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>Python Scripts (<span class="code">python/</span>)</h3>
+            <p><span class="code">classical_analyzer.py</span> and <span class="code">ml_analyzer.py</span> contain the logic for the VADER lexicon (custom heuristic rules) and the Hugging Face API connection for DistilBERT, respectively.</p>
+        </div>
+        <div class="ar">
+            <h3>نصوص بايثون (<span class="code">python/</span>)</h3>
+            <p>يحتوي <span class="code">classical_analyzer.py</span> و <span class="code">ml_analyzer.py</span> على المنطق الخاص بمعجم VADER (قواعد مخصصة لاكتشاف التقنيع) واتصال واجهة Hugging Face لنموذج DistilBERT، على التوالي.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>Evaluation Script (<span class="code">python/evaluation.py</span>)</h3>
+            <p>A script used to benchmark the engines against 15 clinically masked statements to show the limitations of standard ML models compared to this architecture.</p>
+        </div>
+        <div class="ar">
+            <h3>نص التقييم (<span class="code">python/evaluation.py</span>)</h3>
+            <p>برنامج نصي يُستخدم لاختبار المحركات على 15 جملة مقنعة سريرياً لإظهار قيود نماذج التعلم الآلي القياسية مقارنة بهذه البنية المتطورة.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>The React Frontend (<span class="code">src/</span>)</h3>
+            <p>The frontend provides the interactive user interface. <span class="code">Index.tsx</span> is the main landing page arranging all visual sections like the Hero, Pipeline, and Ethics components.</p>
+        </div>
+        <div class="ar">
+            <h3>الواجهة الأمامية (<span class="code">src/</span>)</h3>
+            <p>توفر الواجهة الأمامية واجهة مستخدم تفاعلية وجذابة. <span class="code">Index.tsx</span> هي الصفحة الرئيسية التي ترتب جميع الأقسام المرئية مثل قسم العرض التقديمي (Hero) ومسار العمل والأخلاقيات.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row">
+        <div class="en">
+            <h3>The Core Component (<span class="code">Analyzer.tsx</span>)</h3>
+            <p>The most important piece of the UI. It handles user text input, selects the AI engine, makes API calls, and beautifully renders the complex results in an easy-to-read format.</p>
+        </div>
+        <div class="ar">
+            <h3>المكون الأساسي (<span class="code">Analyzer.tsx</span>)</h3>
+            <p>أهم جزء في واجهة المستخدم. يتعامل مع إدخال النص من قبل المستخدم، ويحدد محرك الذكاء الاصطناعي، ويجري اتصالات API، ويعرض النتائج المعقدة بشكل جميل وسهل القراءة.</p>
+        </div>
+    </div>
+
+    <div class="bilingual-row no-border">
+        <div class="en">
+            <h2>Key Takeaways for Presentation</h2>
+            <p>AffectLayer elegantly solves the problem of detecting masked emotions by comparing three generations of AI side-by-side. It acts as an educational and research tool that visualizes the strengths and weaknesses of different NLP approaches in real-time.</p>
+        </div>
+        <div class="ar">
+            <h2>النقاط الرئيسية للعرض التقديمي</h2>
+            <p>يحل مشروع AffectLayer مشكلة اكتشاف المشاعر المقنعة ببراعة من خلال مقارنة ثلاثة أجيال من الذكاء الاصطناعي جنباً إلى جنب. ويعمل كأداة بحثية وتعليمية تعرض نقاط القوة والضعف لمختلف مناهج معالجة اللغات الطبيعية في الوقت الفعلي.</p>
+        </div>
+    </div>
+
+</body>
+</html>
