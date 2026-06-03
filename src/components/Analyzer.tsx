@@ -132,8 +132,8 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
     }
 
     // Use Google's unofficial free TTS endpoint (sounds like Google Assistant)
-    // client=tw-ob bypasses token requirements
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(input)}&tl=en&client=tw-ob`;
+    // client=gtx on translate.googleapis.com is the most reliable free endpoint
+    const url = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(input)}`;
     
     const audio = new Audio(url);
     audio.playbackRate = playbackSpeed;
