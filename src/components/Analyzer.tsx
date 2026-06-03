@@ -106,7 +106,6 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         audioRef.current.pause();
         audioRef.current = null;
       }
-      window.speechSynthesis.cancel();
       setSpeaking(false);
       return;
     }
@@ -153,74 +152,20 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
         };
         
         await audio.play();
-        return; // Exit early if ElevenLabs succeeded
       } catch (err) {
-        console.error("ElevenLabs error, falling back to browser TTS", err);
+        console.error("ElevenLabs error", err);
+        alert("Failed to connect to ElevenLabs API. Please check your API key.");
+        setSpeaking(false);
       }
+    } else {
+      alert("Please configure your ElevenLabs API Key in Settings (top right) to use the ultra-realistic AI voice.");
+      setSpeaking(false);
     }
-
-    // Fallback to Browser Native TTS
-    const utterance = new SpeechSynthesisUtterance(input);
-    
-    // Heuristic to guess the surface emotion to set the voice tone
-    const lowerInput = input.toLowerCase();
-    
-    let rate = 0.92;
-    let pitch = 1.0;
-    
-    // Cheerful / Upbeat
-    if (/(haha|lol|great|thanks|love|excited|amazing|good|happy|yay)/.test(lowerInput)) {
-      rate = 1.1;
-      pitch = 1.2;
-    } 
-    // Angry / Frustrated
-    else if (/(mad|angry|stupid|hate|ridiculous|worst|furious|annoying)/.test(lowerInput)) {
-      rate = 1.15;
-      pitch = 0.8;
-    }
-    // Sad / Depressed
-    else if (/(sad|alone|left out|ignored|miserable|bad|sorry|hurt|cry)/.test(lowerInput)) {
-      rate = 0.85;
-      pitch = 0.85;
-    }
-    // Calm / Neutral / Resigned
-    else if (/(fine|whatever|okay|calm|quiet|soft|peace|survive)/.test(lowerInput)) {
-      rate = 0.85;
-      pitch = 0.95;
-    }
-    // If there is an existing result for this exact text, refine using surface emotion
-    if (currentResult && currentResult.surfaceEmotion) {
-        const surfaceLabel = currentResult.surfaceEmotion.label.toLowerCase();
-        if (surfaceLabel.includes("joy") || surfaceLabel.includes("positive") || surfaceLabel.includes("happiness")) {
-            rate = 1.1; pitch = 1.2;
-        } else if (surfaceLabel.includes("anger") || surfaceLabel.includes("frustration")) {
-            rate = 1.15; pitch = 0.8;
-        } else if (surfaceLabel.includes("sadness") || surfaceLabel.includes("disappointment")) {
-            rate = 0.85; pitch = 0.85;
-        } else if (surfaceLabel.includes("neutral") || surfaceLabel.includes("calm")) {
-            rate = 0.85; pitch = 0.95;
-        }
-    }
-
-    utterance.rate = rate;
-    utterance.pitch = pitch;
-
-    // Prefer a natural English voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v =>
-      v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("Google"))
-    );
-    if (preferred) utterance.voice = preferred;
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
-    setSpeaking(true);
-    window.speechSynthesis.speak(utterance);
   };
 
   // Stop speaking on unmount
   useEffect(() => () => {
     if (audioRef.current) audioRef.current.pause();
-    window.speechSynthesis.cancel();
   }, []);
 
   useEffect(() => {
