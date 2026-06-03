@@ -94,72 +94,74 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
     }
   }, [currentResult]);
 
-  // Text-to-speech using Free Google AI Voice (No API Key needed)
+  // Text-to-speech using Browser API (Guaranteed to work)
   const [speaking, setSpeaking] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const handleSpeak = () => {
     if (!input.trim()) return;
-    
-    // Stop if currently playing
-    if (speaking && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    if (speaking) {
+      window.speechSynthesis.cancel();
       setSpeaking(false);
       return;
     }
-
-    setSpeaking(true);
-
-    // Heuristic for speed based on emotion
-    const lowerInput = input.toLowerCase();
-    let playbackSpeed = 1.0;
+    const utterance = new SpeechSynthesisUtterance(input);
     
-    // Cheerful/Angry are faster, Sad/Calm are slower
-    if (/(haha|lol|great|thanks|love|excited|amazing|good|happy|yay|mad|angry|stupid|hate|ridiculous)/.test(lowerInput)) {
-      playbackSpeed = 1.1;
-    } else if (/(sad|alone|left out|ignored|miserable|bad|sorry|hurt|cry|fine|whatever|okay|calm|quiet)/.test(lowerInput)) {
-      playbackSpeed = 0.9;
+    // Heuristic to guess the surface emotion to set the voice tone
+    const lowerInput = input.toLowerCase();
+    
+    let rate = 0.92;
+    let pitch = 1.0;
+    
+    // Cheerful / Upbeat
+    if (/(haha|lol|great|thanks|love|excited|amazing|good|happy|yay)/.test(lowerInput)) {
+      rate = 1.1;
+      pitch = 1.2;
+    } 
+    // Angry / Frustrated
+    else if (/(mad|angry|stupid|hate|ridiculous|worst|furious|annoying)/.test(lowerInput)) {
+      rate = 1.15;
+      pitch = 0.8;
     }
-
+    // Sad / Depressed
+    else if (/(sad|alone|left out|ignored|miserable|bad|sorry|hurt|cry)/.test(lowerInput)) {
+      rate = 0.85;
+      pitch = 0.85;
+    }
+    // Calm / Neutral / Resigned
+    else if (/(fine|whatever|okay|calm|quiet|soft|peace|survive)/.test(lowerInput)) {
+      rate = 0.85;
+      pitch = 0.95;
+    }
+    // If there is an existing result for this exact text, refine using surface emotion
     if (currentResult && currentResult.surfaceEmotion) {
         const surfaceLabel = currentResult.surfaceEmotion.label.toLowerCase();
-        if (surfaceLabel.includes("joy") || surfaceLabel.includes("positive") || surfaceLabel.includes("anger")) {
-            playbackSpeed = 1.1;
-        } else if (surfaceLabel.includes("sadness") || surfaceLabel.includes("neutral") || surfaceLabel.includes("calm")) {
-            playbackSpeed = 0.9;
+        if (surfaceLabel.includes("joy") || surfaceLabel.includes("positive") || surfaceLabel.includes("happiness")) {
+            rate = 1.1; pitch = 1.2;
+        } else if (surfaceLabel.includes("anger") || surfaceLabel.includes("frustration")) {
+            rate = 1.15; pitch = 0.8;
+        } else if (surfaceLabel.includes("sadness") || surfaceLabel.includes("disappointment")) {
+            rate = 0.85; pitch = 0.85;
+        } else if (surfaceLabel.includes("neutral") || surfaceLabel.includes("calm")) {
+            rate = 0.85; pitch = 0.95;
         }
     }
 
-    // Use Google's unofficial free TTS endpoint (sounds like Google Assistant)
-    // client=gtx on translate.googleapis.com is the most reliable free endpoint
-    const url = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(input)}`;
-    
-    const audio = new Audio(url);
-    audio.playbackRate = playbackSpeed;
-    audioRef.current = audio;
+    utterance.rate = rate;
+    utterance.pitch = pitch;
 
-    audio.onended = () => {
-      setSpeaking(false);
-      audioRef.current = null;
-    };
-    
-    audio.onerror = () => {
-      setSpeaking(false);
-      audioRef.current = null;
-    };
-
-    audio.play().catch(() => {
-      setSpeaking(false);
-    });
+    // Prefer a natural English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("Google"))
+    );
+    if (preferred) utterance.voice = preferred;
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    setSpeaking(true);
+    window.speechSynthesis.speak(utterance);
   };
 
   // Stop speaking on unmount
-  useEffect(() => () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-  }, []);
+  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
 
   useEffect(() => {
     if (exampleText) {
