@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, MessageSquare, Cpu, Brain, Sparkles, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { Play, RotateCcw, BookOpen, Lightbulb, AlertTriangle, Target, Layers, MessageSquare, Cpu, Brain, Sparkles, ChevronRight, Volume2, VolumeX, Zap } from "lucide-react";
 import { analyzeText, loadingMessages, exampleSamples, type AnalysisResult } from "@/lib/analyzer";
 import { classicalAnalyzeText } from "@/lib/classicalAnalyzer";
 import { mlAnalyzeText, type MLProgress } from "@/lib/mlAnalyzer";
 import EmotionWordCloud from "@/components/EmotionWordCloud";
 import EnvelopeCard from "@/components/EnvelopeCard";
+import { useBackendWarmup } from "@/hooks/useBackendWarmup";
 
 type Engine = "classical" | "ml" | "gemini";
 
@@ -56,6 +57,7 @@ const engineConfig = {
 const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => {
   const [input, setInput] = useState("");
   const [engine, setEngine] = useState<Engine>("classical");
+  const { isWarm } = useBackendWarmup();
   
   // Track loading state per engine
   const [loadingStates, setLoadingStates] = useState<Record<Engine, boolean>>({
@@ -310,6 +312,17 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
             {cfg.badge}
           </span>
         </div>
+
+        {/* Backend cold-start warning — only for Classical/ML when not yet warm */}
+        {!isWarm && engine !== "gemini" && (
+          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20 animate-fade-in">
+            <Zap className="w-3.5 h-3.5 shrink-0 text-amber-400 animate-pulse" />
+            <p className="text-xs text-amber-400/90">
+              <span className="font-semibold">Backend waking up…</span>{" "}
+              The Python server may take ~20s on first use. Subsequent analyses will be instant.
+            </p>
+          </div>
+        )}
 
         {/* Input and Action Buttons */}
         <div className="glass-card p-6 md:p-8 space-y-6">
