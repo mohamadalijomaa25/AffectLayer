@@ -94,15 +94,72 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
     }
   }, [currentResult]);
 
-  // Text-to-speech using Browser API (Guaranteed to work)
+  // Text-to-speech
   const [speaking, setSpeaking] = useState(false);
-  const handleSpeak = () => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleSpeak = async () => {
     if (!input.trim()) return;
+    
     if (speaking) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       window.speechSynthesis.cancel();
       setSpeaking(false);
       return;
     }
+    
+    setSpeaking(true);
+
+    const elevenLabsKey = localStorage.getItem("elevenlabs_api_key");
+    
+    if (elevenLabsKey) {
+      // Use ElevenLabs API
+      try {
+        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel - very natural female voice
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: "POST",
+          headers: {
+            "Accept": "audio/mpeg",
+            "Content-Type": "application/json",
+            "xi-api-key": elevenLabsKey
+          },
+          body: JSON.stringify({
+            text: input,
+            model_id: "eleven_monolingual_v1",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.75
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error("ElevenLabs API failed");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        
+        audio.onended = () => {
+          setSpeaking(false);
+          audioRef.current = null;
+        };
+        audio.onerror = () => {
+          setSpeaking(false);
+          audioRef.current = null;
+        };
+        
+        await audio.play();
+        return; // Exit early if ElevenLabs succeeded
+      } catch (err) {
+        console.error("ElevenLabs error, falling back to browser TTS", err);
+      }
+    }
+
+    // Fallback to Browser Native TTS
     const utterance = new SpeechSynthesisUtterance(input);
     
     // Heuristic to guess the surface emotion to set the voice tone
@@ -161,7 +218,10 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
   };
 
   // Stop speaking on unmount
-  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
+  useEffect(() => () => {
+    if (audioRef.current) audioRef.current.pause();
+    window.speechSynthesis.cancel();
+  }, []);
 
   useEffect(() => {
     if (exampleText) {

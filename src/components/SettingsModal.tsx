@@ -9,12 +9,15 @@ interface Props {
 
 export function SettingsModal({ isOpen, onClose }: Props) {
   const [apiKey, setApiKey] = useState("");
+  const [elevenLabsKey, setElevenLabsKey] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       const storedKey = localStorage.getItem("gemini_api_key") || "";
+      const storedElevenLabs = localStorage.getItem("elevenlabs_api_key") || "";
       setApiKey(storedKey);
+      setElevenLabsKey(storedElevenLabs);
       setSaved(false);
     }
   }, [isOpen]);
@@ -23,6 +26,7 @@ export function SettingsModal({ isOpen, onClose }: Props) {
 
   const handleSave = () => {
     localStorage.setItem("gemini_api_key", apiKey.trim());
+    localStorage.setItem("elevenlabs_api_key", elevenLabsKey.trim());
     setSaved(true);
     setTimeout(() => {
       onClose();
@@ -62,6 +66,22 @@ export function SettingsModal({ isOpen, onClose }: Props) {
           />
           <p className="text-xs text-muted-foreground">
             Don't have one? Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline hover:text-cyan/80">Google AI Studio</a>.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <label className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center justify-between">
+            ElevenLabs API Key <span className="text-muted-foreground font-normal">(Optional TTS)</span>
+          </label>
+          <input
+            type="password"
+            value={elevenLabsKey}
+            onChange={(e) => setElevenLabsKey(e.target.value)}
+            placeholder="sk_..."
+            className="w-full bg-secondary/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-pink focus:ring-1 focus:ring-pink/30 transition-all font-mono"
+          />
+          <p className="text-xs text-muted-foreground">
+            Get ultra-realistic AI voices from <a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer" className="text-pink hover:underline hover:text-pink/80">ElevenLabs</a>.
           </p>
         </div>
 
