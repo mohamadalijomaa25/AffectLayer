@@ -117,7 +117,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
     if (elevenLabsKey) {
       // Use ElevenLabs API
       try {
-        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel - very natural female voice
+        const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Sarah - soft female voice (compatible with free tier)
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
           method: "POST",
           headers: {
@@ -127,7 +127,7 @@ const Analyzer = ({ exampleText, onExampleConsumed, onResultChange }: Props) => 
           },
           body: JSON.stringify({
             text: input,
-            model_id: "eleven_monolingual_v1",
+            model_id: "eleven_multilingual_v2",
             voice_settings: {
               stability: 0.5,
               similarity_boost: 0.75
