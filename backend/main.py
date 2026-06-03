@@ -124,6 +124,14 @@ def analyze_endpoint(req: AnalyzeRequest):
         print(f"Error analyzing text: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/")
+def read_root():
+    return {
+        "status": "ok",
+        "message": "AffectLayer Backend API is running. Live endpoints: /health (GET), /api/analyze (POST). Docs available at /docs or /redoc."
+    }
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "Backend is running!"}
+

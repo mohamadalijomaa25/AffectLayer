@@ -23,7 +23,7 @@ export type MLProgress = {
   message?: string;
 };
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://affectlayer-backend.onrender.com";
 
 export async function mlAnalyzeText(
   text: string,

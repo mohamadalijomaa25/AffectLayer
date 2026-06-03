@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Terminal, Play, Server, Code, FileJson } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://affectlayer-backend.onrender.com";
 
 const ApiPlaygroundPage = () => {
   const [text, setText] = useState("Haha it's okay, I'm used to being ignored.");

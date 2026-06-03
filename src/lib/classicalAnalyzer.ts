@@ -1,6 +1,6 @@
 import type { AnalysisResult } from "./analyzer";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://affectlayer-backend.onrender.com";
 
 export async function classicalAnalyzeText(text: string): Promise<AnalysisResult> {
   const response = await fetch(`${API_URL}/api/analyze`, {
